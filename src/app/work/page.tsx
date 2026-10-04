@@ -16,7 +16,7 @@ export default async function WorkPage() {
   return (
     <div className="w-full pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-neutral-950 dark:text-white">
+        <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-neutral-950">
           CREATIVE WORK ARCHIVE
         </h1>
         <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-neutral-500 mt-1">

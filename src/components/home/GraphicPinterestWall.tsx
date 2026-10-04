@@ -34,7 +34,7 @@ export function GraphicPinterestWall({
   }, [graphicProjects, sizeFilter]);
 
   return (
-    <section id="graphic-section" className="w-full py-10 md:py-14 border-t border-neutral-200 dark:border-neutral-800">
+    <section id="graphic-section" className="w-full py-10 md:py-14 border-t border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Category Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -42,17 +42,17 @@ export function GraphicPinterestWall({
             <span className="text-xs uppercase tracking-widest font-black text-rose-500">
               CATEGORY 01
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-0.5">
+            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
               GRAPHIC DESIGN
             </h2>
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mt-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mt-1">
               Social Media Ads • Posters • Branding • Print • Banners
             </p>
           </div>
 
           <Link
             href="/work/graphic"
-            className="text-xs font-bold uppercase tracking-wider text-neutral-500 hover:text-neutral-950 dark:hover:text-white inline-flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-950 inline-flex items-center gap-1"
           >
             <span>View All Graphics</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -68,21 +68,21 @@ export function GraphicPinterestWall({
               onClick={() => setSizeFilter(opt.value)}
               className={`px-4 py-2 text-xs font-bold whitespace-nowrap rounded-full transition-all cursor-pointer ${
                 sizeFilter === opt.value
-                  ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-md scale-102'
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                  ? 'bg-neutral-900 text-white shadow-sm scale-102'
+                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
               }`}
             >
               {opt.label}
             </button>
           ))}
-          <span className="text-xs text-neutral-400 ml-auto shrink-0 hidden sm:inline">
+          <span className="text-xs text-neutral-500 ml-auto shrink-0 hidden sm:inline">
             {filtered.length} {filtered.length === 1 ? 'Pin' : 'Pins'}
           </span>
         </div>
 
         {/* Pinterest Masonry Columns (Only Graphics) */}
         {filtered.length === 0 ? (
-          <div className="py-20 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl">
+          <div className="py-20 text-center border border-dashed border-neutral-200 rounded-2xl">
             <p className="text-xs text-neutral-500 font-semibold uppercase">
               No graphic projects found in this format.
             </p>
@@ -93,7 +93,7 @@ export function GraphicPinterestWall({
               <div
                 key={project.id}
                 onClick={() => setSelectedPin(project)}
-                className="break-inside-avoid mb-4 group relative rounded-2xl overflow-hidden cursor-zoom-in bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/70 dark:border-neutral-800/70 shadow-xs hover:shadow-xl transition-all duration-300"
+                className="break-inside-avoid mb-4 group relative rounded-2xl overflow-hidden cursor-zoom-in bg-neutral-100 border border-neutral-200/80 shadow-xs hover:shadow-xl transition-all duration-300"
               >
                 {/* Visual Pin Image in its natural aspect ratio */}
                 <img

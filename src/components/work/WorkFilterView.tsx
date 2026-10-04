@@ -69,9 +69,9 @@ export function WorkFilterView({
   return (
     <div className="w-full space-y-8">
       {/* Filter Bar */}
-      <div className="bg-neutral-50 dark:bg-[#121212] p-4 sm:p-6 border border-neutral-200 dark:border-neutral-800 space-y-4">
+      <div className="bg-white p-4 sm:p-6 border border-neutral-200 rounded-xl space-y-4 shadow-xs">
         {/* Type Selector Tabs */}
-        <div className="flex flex-wrap gap-2 pb-3 border-b border-neutral-200 dark:border-neutral-800">
+        <div className="flex flex-wrap gap-2 pb-3 border-b border-neutral-200">
           {[
             { label: 'ALL WORK', value: 'all' },
             { label: 'GRAPHIC', value: 'graphic' },
@@ -83,10 +83,10 @@ export function WorkFilterView({
               key={tab.value}
               type="button"
               onClick={() => setSelectedType(tab.value)}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-sm transition-all cursor-pointer ${
+              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
                 selectedType === tab.value
-                  ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-sm'
-                  : 'bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-white'
+                  ? 'bg-neutral-950 text-white shadow-xs'
+                  : 'bg-neutral-100 border border-neutral-200/80 text-neutral-700 hover:bg-neutral-200 hover:text-neutral-950'
               }`}
             >
               {tab.label}
@@ -105,7 +105,7 @@ export function WorkFilterView({
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-1.5 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-sm font-medium text-neutral-800 dark:text-neutral-200"
+            className="px-3 py-1.5 bg-white border border-neutral-300 rounded-lg font-medium text-neutral-800"
           >
             <option value="all">All Categories</option>
             {categories.map((cat) => (
@@ -119,7 +119,7 @@ export function WorkFilterView({
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="px-3 py-1.5 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-sm font-medium text-neutral-800 dark:text-neutral-200"
+            className="px-3 py-1.5 bg-white border border-neutral-300 rounded-lg font-medium text-neutral-800"
           >
             <option value="all">All Years</option>
             {years.map((y) => (
@@ -135,7 +135,7 @@ export function WorkFilterView({
             placeholder="Search keywords, tools..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-1.5 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-sm font-medium text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-950 dark:focus:border-white"
+            className="px-3 py-1.5 bg-white border border-neutral-300 rounded-lg font-medium text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900"
           />
 
           {(selectedCategory !== 'all' || selectedYear !== 'all' || searchQuery || selectedType !== 'all') && (

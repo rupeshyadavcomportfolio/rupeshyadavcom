@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { MobileNavigationBar } from '@/components/layout/MobileNavigationBar';
 import { getSiteSettings } from '@/lib/db';
 import { generatePersonSchema, generateWebSiteSchema } from '@/lib/seo';
 
@@ -23,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: settings.default_seo_description,
     keywords: [
       'Graphic Designer',
-      'Video Creator',
+      'Video Editor',
       'Web Designer',
       'Rupesh Yadav',
       '@rupeshyadavcom',
@@ -92,11 +93,12 @@ export default async function RootLayout({
           <meta name="google-site-verification" content={settings.search_console_code} />
         )}
       </head>
-      <body className="min-h-screen flex flex-col font-sans bg-white dark:bg-[#0c0c0c] text-neutral-900 dark:text-neutral-100 transition-colors">
+      <body className="min-h-screen flex flex-col font-sans bg-white text-neutral-900 antialiased">
         <ThemeProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <Footer settings={settings} />
+          <MobileNavigationBar phone={settings.phone} />
         </ThemeProvider>
       </body>
     </html>

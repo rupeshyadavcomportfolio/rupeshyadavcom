@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ProjectType, ProjectStatus } from '@/types/portfolio';
 import {
@@ -15,6 +15,10 @@ import {
   HelpCircle,
   Eye,
   Loader2,
+  Sparkles,
+  Globe,
+  Film,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface Props {
@@ -25,6 +29,14 @@ interface Props {
 export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props) {
   const router = useRouter();
   const isEditing = Boolean(initialProject?.id);
+
+  // File Upload Refs
+  const featuredFileInputRef = useRef<HTMLInputElement>(null);
+  const videoFileInputRef = useRef<HTMLInputElement>(null);
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState<Partial<Project>>(() => {
@@ -84,10 +96,110 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
     };
   });
 
-  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'details' | 'case_study' | 'seo' | 'publishing' | 'preview'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'details' | 'case_study' | 'seo' | 'publishing'>('basic');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fetchingWebsite, setFetchingWebsite] = useState(false);
+  const [websiteFetchMsg, setWebsiteFetchMsg] = useState<string | null>(null);
+
+  // File Upload Handler (Images & Videos from Device/Gallery)
+  const handleFileUpload = async (file: File, target: 'featured' | 'video' | 'gallery') => {
+    if (!file) return;
+    setUploadingFile(true);
+    setUploadMsg(`Uploading ${file.name}...`);
+
+    try {
+      const data = new FormData();
+      data.append('file', file);
+
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Upload failed');
+      }
+
+      const item = await res.json();
+
+      if (target === 'featured') {
+        setFormData((prev) => ({
+          ...prev,
+          featured_image: item.url,
+          desktop_screenshot: prev.type === 'website' ? item.url : prev.desktop_screenshot,
+          alt_text: prev.alt_text || `${prev.title || file.name} preview by Rupesh Yadav`,
+        }));
+        setUploadMsg(`✓ Photo uploaded successfully from gallery!`);
+      } else if (target === 'video') {
+        setFormData((prev) => ({
+          ...prev,
+          video_url: item.url,
+        }));
+        setUploadMsg(`✓ Video uploaded successfully from gallery!`);
+      } else if (target === 'gallery') {
+        setFormData((prev) => ({
+          ...prev,
+          gallery: [
+            ...(prev.gallery || []),
+            {
+              url: item.url,
+              alt: `${prev.title || 'Project'} asset`,
+              aspect_ratio: '1:1',
+            },
+          ],
+        }));
+        setUploadMsg(`✓ Added ${file.name} to gallery!`);
+      }
+    } catch (err: any) {
+      setUploadMsg(`Upload error: ${err.message || 'Failed to upload'}`);
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  // Auto fetch website screenshot & metadata
+  const handleAutoFetchWebsite = async (overrideUrl?: string) => {
+    let targetUrl = (overrideUrl || formData.website_url || '').trim();
+    if (!targetUrl) {
+      setWebsiteFetchMsg('Please enter a website URL first.');
+      return;
+    }
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = `https://${targetUrl}`;
+    }
+
+    setFetchingWebsite(true);
+    setWebsiteFetchMsg(null);
+
+    try {
+      const res = await fetch(`/api/website-preview?url=${encodeURIComponent(targetUrl)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch website preview');
+
+      setFormData((prev) => {
+        const cleanName = data.clean_url || 'Website Project';
+        const newTitle = prev.title || data.title || cleanName;
+        return {
+          ...prev,
+          website_url: data.url,
+          featured_image: data.screenshot_url,
+          desktop_screenshot: data.screenshot_url,
+          title: newTitle,
+          short_description: prev.short_description || data.description || `High-performance modern web application built for ${cleanName}.`,
+          alt_text: prev.alt_text || `${newTitle} homepage preview screenshot by Rupesh Yadav`,
+          slug: prev.slug || cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        };
+      });
+      setWebsiteFetchMsg('✓ Website homepage screenshot & details fetched successfully!');
+    } catch (err: any) {
+      setWebsiteFetchMsg(`Error: ${err.message || 'Could not fetch preview'}`);
+    } finally {
+      setFetchingWebsite(false);
+    }
+  };
 
   // Auto-generate slug from title if empty
   const handleTitleChange = (val: string) => {
@@ -149,32 +261,35 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
     }));
   };
 
-  // SEO Readiness Validation Checks
+  // Validation Checks
   const validationChecks = [
-    { name: 'Project Title', valid: Boolean(formData.title?.trim()) },
-    { name: 'URL Slug', valid: Boolean(formData.slug?.trim()) },
+    { name: 'Title Provided', valid: Boolean(formData.title?.trim()) },
+    { name: 'Slug Provided', valid: Boolean(formData.slug?.trim()) },
     { name: 'Category Selected', valid: Boolean(formData.category?.trim()) },
-    { name: 'Featured Media Image/Video', valid: Boolean(formData.featured_image?.trim() || formData.video_url?.trim()) },
-    { name: 'Short Description', valid: Boolean(formData.short_description?.trim()) },
-    { name: 'Alt Text for Accessibility', valid: Boolean(formData.alt_text?.trim()) },
-    { name: 'SEO Title', valid: Boolean(formData.seo?.seo_title?.trim()) },
-    { name: 'SEO Meta Description', valid: Boolean(formData.seo?.seo_description?.trim() || formData.short_description?.trim()) },
+    { name: 'Short Description Provided', valid: Boolean(formData.short_description?.trim()) },
+    { name: 'Primary Media/Featured Image Attached', valid: Boolean(formData.featured_image?.trim() || formData.video_url?.trim()) },
+    { name: 'Alt Text Configured', valid: Boolean(formData.alt_text?.trim()) },
   ];
 
   const canPublish = validationChecks.every((c) => c.valid);
 
+  // Save / Update Handler
   const handleSave = async (statusOverride?: ProjectStatus) => {
     setSaving(true);
-    setErrorMsg(null);
     setSaveSuccess(false);
-
-    const payload = {
-      ...formData,
-      status: statusOverride || formData.status || 'draft',
-    };
+    setErrorMsg(null);
 
     try {
-      const url = isEditing ? `/api/projects/${initialProject!.id}` : '/api/projects';
+      const payload: Partial<Project> = {
+        ...formData,
+        status: statusOverride || formData.status || 'draft',
+      };
+
+      if (!payload.title || !payload.slug) {
+        throw new Error('Title and Slug are mandatory.');
+      }
+
+      const url = isEditing ? `/api/projects/${initialProject?.id}` : '/api/projects';
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -204,13 +319,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#121212] p-4 sm:p-6 border border-neutral-200 dark:border-neutral-800">
+      {/* Top Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 border border-neutral-200 rounded-2xl shadow-xs">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => router.push('/admin/projects')}
-            className="p-1.5 text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
+            className="p-2 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -218,19 +333,19 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               {isEditing ? 'Edit Project' : 'Create New Project'}
             </span>
-            <h1 className="text-xl font-black uppercase text-neutral-950 dark:text-white truncate max-w-md">
+            <h1 className="text-xl font-black uppercase text-neutral-950 truncate max-w-md">
               {formData.title || 'Untitled Project'}
             </h1>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {isEditing && formData.slug && (
             <a
               href={`/work/${formData.type}/${formData.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider border border-neutral-300 text-neutral-700 hover:text-neutral-950 rounded-xl hover:bg-neutral-50 shadow-xs"
             >
               <span>View Live</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -241,7 +356,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             type="button"
             disabled={saving}
             onClick={() => handleSave('draft')}
-            className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-xs hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer"
+            className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-neutral-300 text-neutral-800 rounded-xl hover:bg-neutral-50 shadow-xs cursor-pointer"
           >
             Save Draft
           </button>
@@ -250,7 +365,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             type="button"
             disabled={saving}
             onClick={() => handleSave('published')}
-            className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xs hover:opacity-90 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-xs cursor-pointer"
           >
             {saving ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -263,24 +378,24 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
       </div>
 
       {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 shrink-0" />
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-xl flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>Project saved and cache revalidated successfully!</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+        <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Tabs Bar */}
-      <div className="flex overflow-x-auto gap-2 border-b border-neutral-200 dark:border-neutral-800 pb-2">
+      <div className="flex overflow-x-auto gap-2 pb-1">
         {[
           { id: 'basic', label: '1. Basic Info' },
-          { id: 'media', label: '2. Media & Formats' },
+          { id: 'media', label: '2. Media & Uploads' },
           { id: 'details', label: '3. Narrative & Tools' },
           ...(formData.type === 'case_study' ? [{ id: 'case_study', label: '4. Case Study Narrative' }] : []),
           { id: 'seo', label: 'SEO & Metadata' },
@@ -290,10 +405,10 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 py-2 text-xs font-bold uppercase tracking-wider whitespace-nowrap rounded-xs transition-colors cursor-pointer ${
+            className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap rounded-xl transition-all cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950'
-                : 'bg-white dark:bg-[#141414] border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white'
+                ? 'bg-neutral-950 text-white shadow-xs'
+                : 'bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 shadow-xs'
             }`}
           >
             {tab.label}
@@ -303,14 +418,50 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 1: BASIC INFO */}
       {activeTab === 'basic' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-6">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
             Basic Project Information
           </h2>
 
+          {/* Quick Auto-Generate Website Info & Screenshot */}
+          {formData.type === 'website' && (
+            <div className="p-5 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-900">
+                  Instant Website Screenshot & Info Generator
+                </span>
+              </div>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                Yaha website ka live link dalein aur button dabayein — homepage screenshot, title aur details automatically set ho jayenge, alag se photo upload karne ki zaroorat nahi hai!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="url"
+                  placeholder="https://client-website.com"
+                  value={formData.website_url || ''}
+                  onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
+                  className="flex-1 px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
+                />
+                <button
+                  type="button"
+                  disabled={fetchingWebsite}
+                  onClick={() => handleAutoFetchWebsite()}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                >
+                  {fetchingWebsite ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  <span>Generate Screenshot</span>
+                </button>
+              </div>
+              {websiteFetchMsg && (
+                <p className="text-xs font-semibold text-emerald-800">{websiteFetchMsg}</p>
+              )}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Project Title <span className="text-red-500">*</span>
               </label>
               <input
@@ -319,12 +470,12 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 placeholder="e.g. Aura Sound — Audio Identity Campaign"
                 value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs focus:outline-none focus:border-neutral-950 dark:focus:border-white"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 URL Slug <span className="text-red-500">*</span>
               </label>
               <input
@@ -333,20 +484,20 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 placeholder="aura-sound-audio-campaign"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs focus:outline-none focus:border-neutral-950 dark:focus:border-white font-mono"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Work Type
               </label>
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as ProjectType })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs uppercase font-semibold"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl uppercase font-semibold focus:outline-none focus:border-neutral-900"
               >
                 <option value="graphic">Graphic</option>
                 <option value="video">Video</option>
@@ -356,7 +507,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Primary Category
               </label>
               <input
@@ -364,12 +515,12 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 placeholder="Social Media Design / Reels / Landing Page"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Client (Optional)
               </label>
               <input
@@ -377,35 +528,35 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 placeholder="Client or Brand Name"
                 value={formData.client}
                 onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Year
               </label>
               <input
                 type="text"
                 value={formData.year}
                 onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Publishing Status
               </label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as ProjectStatus })}
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs uppercase font-semibold"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl uppercase font-semibold focus:outline-none focus:border-neutral-900"
               >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
+                <option value="published">Published (Public)</option>
+                <option value="draft">Draft (Hidden)</option>
                 <option value="archived">Archived</option>
                 <option value="private">Private</option>
               </select>
@@ -417,16 +568,16 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 id="featured_cb"
                 checked={Boolean(formData.featured)}
                 onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                className="w-4 h-4 rounded-xs"
+                className="w-4 h-4 rounded-md"
               />
-              <label htmlFor="featured_cb" className="text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <label htmlFor="featured_cb" className="text-xs font-bold uppercase tracking-wider text-neutral-800 cursor-pointer">
                 Feature on Homepage
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
               Short Description (1-2 sentences) <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -435,7 +586,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               placeholder="Concise overview of the creative output..."
               value={formData.short_description}
               onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900"
             />
           </div>
         </div>
@@ -443,35 +594,90 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 2: MEDIA & FORMATS */}
       {activeTab === 'media' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
-            Media Assets & Format Configuration
-          </h2>
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Media Assets & Device Uploads
+            </h2>
+            {uploadMsg && (
+              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                {uploadMsg}
+              </span>
+            )}
+          </div>
 
-          {/* Featured Image URL & Preview */}
-          <div className="space-y-3">
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
-              Featured Image URL <span className="text-red-500">*</span>
-            </label>
+          {/* 1. FEATURED IMAGE UPLOAD (Gallery or URL) */}
+          <div className="p-6 bg-neutral-50/70 border border-neutral-200 rounded-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-neutral-900">
+                  Featured Image / Thumbnail <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-neutral-500 mt-0.5">
+                  Gallery se photo upload karein ya image URL paste karein.
+                </p>
+              </div>
+
+              {/* GALLERY UPLOAD BUTTON */}
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={featuredFileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'featured');
+                  }}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  disabled={uploadingFile}
+                  onClick={() => featuredFileInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-950 hover:bg-neutral-800 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                >
+                  {uploadingFile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                  <span>Upload from Gallery / Files</span>
+                </button>
+              </div>
+            </div>
+
+            {/* URL input fallback */}
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="https://... or /uploads/filename.jpg"
-                value={formData.featured_image}
+                placeholder="Or paste image URL (https://... or /uploads/...)"
+                value={formData.featured_image || ''}
                 onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                className="flex-1 px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="flex-1 px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900"
               />
+              {formData.type === 'website' && (
+                <button
+                  type="button"
+                  disabled={fetchingWebsite}
+                  onClick={() => handleAutoFetchWebsite()}
+                  className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs uppercase rounded-xl flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-xs"
+                >
+                  {fetchingWebsite ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  <span>Auto-Screenshot</span>
+                </button>
+              )}
             </div>
+
+            {/* Preview Box */}
             {formData.featured_image && (
-              <div className="w-48 aspect-16/10 bg-neutral-100 overflow-hidden border border-neutral-300 rounded-xs mt-2">
-                <img src={formData.featured_image} alt="Preview" className="w-full h-full object-cover" />
+              <div className="pt-2">
+                <div className="w-64 aspect-16/10 bg-white overflow-hidden border border-neutral-300 rounded-xl shadow-xs">
+                  <img src={formData.featured_image} alt="Preview" className="w-full h-full object-cover object-top" />
+                </div>
+                <span className="text-[11px] text-neutral-500 mt-1 block">Current Preview</span>
               </div>
             )}
           </div>
 
           {/* Alt text */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
               Accessible Alt Text <span className="text-red-500">*</span>
             </label>
             <input
@@ -479,103 +685,69 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               placeholder="e.g. Aura Sound wireless headphones marketing graphic by Rupesh Yadav"
               value={formData.alt_text}
               onChange={(e) => setFormData({ ...formData, alt_text: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900"
             />
           </div>
 
-          {/* GRAPHIC FORMAT SELECTOR (Specific to Graphics) */}
-          {formData.type === 'graphic' && (
-            <div className="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
-                Graphic Format & Aspect Ratio Preset
-              </h3>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {Object.keys(formatPresets).map((fmt) => (
-                  <button
-                    key={fmt}
-                    type="button"
-                    onClick={() => handleFormatSelect(fmt)}
-                    className={`p-2.5 text-xs text-left font-medium border rounded-xs transition-colors cursor-pointer ${
-                      formData.format_name === fmt
-                        ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
-                        : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-[#181818] hover:border-neutral-400'
-                    }`}
-                  >
-                    <span className="block font-bold truncate">{fmt}</span>
-                    <span className="text-[10px] opacity-75">{formatPresets[fmt].ratio}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Custom Size Inputs */}
-              {formData.format_name === 'Custom' && (
-                <div className="p-4 bg-neutral-50 dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 space-y-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
-                    Custom Dimension Calculator
-                  </span>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[11px] text-neutral-400 block mb-1">Width (px)</label>
-                      <input
-                        type="number"
-                        value={formData.custom_width}
-                        onChange={(e) => {
-                          const w = Number(e.target.value);
-                          calculateCustomRatio(w, formData.custom_height || 1080);
-                        }}
-                        className="w-full px-3 py-1.5 text-xs bg-white dark:bg-[#111111] border border-neutral-300 dark:border-neutral-700 rounded-xs"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] text-neutral-400 block mb-1">Height (px)</label>
-                      <input
-                        type="number"
-                        value={formData.custom_height}
-                        onChange={(e) => {
-                          const h = Number(e.target.value);
-                          calculateCustomRatio(formData.custom_width || 1080, h);
-                        }}
-                        className="w-full px-3 py-1.5 text-xs bg-white dark:bg-[#111111] border border-neutral-300 dark:border-neutral-700 rounded-xs"
-                      />
-                    </div>
-                  </div>
-                  <p className="text-xs text-neutral-500">
-                    Calculated Ratio: <strong>{formData.aspect_ratio}</strong> • Orientation: <strong>{formData.orientation}</strong>
+          {/* 2. VIDEO SPECIFIC FIELDS & GALLERY UPLOAD */}
+          {formData.type === 'video' && (
+            <div className="p-6 bg-neutral-50/70 border border-neutral-200 rounded-2xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                    Video File & Configuration
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Gallery se MP4 video upload karein ya direct video URL paste karein.
                   </p>
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* VIDEO SPECIFIC FIELDS */}
-          {formData.type === 'video' && (
-            <div className="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
-                Video Configuration
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* VIDEO FILE UPLOAD BUTTON */}
                 <div>
-                  <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
-                    Video File / MP4 URL
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime,video/*"
+                    ref={videoFileInputRef}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload(file, 'video');
+                    }}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    disabled={uploadingFile}
+                    onClick={() => videoFileInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-950 hover:bg-neutral-800 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    {uploadingFile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Film className="w-3.5 h-3.5" />}
+                    <span>Upload Video from Gallery</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-1">
+                  <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
+                    Video URL / Path
                   </label>
                   <input
                     type="text"
                     placeholder="https://...mp4 or /uploads/video.mp4"
                     value={formData.video_url}
                     onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                  <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                     Video Type
                   </label>
                   <select
                     value={formData.video_type}
                     onChange={(e) => setFormData({ ...formData, video_type: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none"
                   >
                     <option value="Short Video">Short Video</option>
                     <option value="Reels">Reels / Shorts</option>
@@ -588,41 +760,61 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                  <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                     Duration (e.g. 0:45)
                   </label>
                   <input
                     type="text"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none"
                   />
                 </div>
               </div>
+
+              {formData.video_url && (
+                <div className="pt-2">
+                  <div className="w-64 aspect-9/16 max-h-64 bg-black rounded-xl overflow-hidden shadow-xs">
+                    <video src={formData.video_url} controls className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[11px] text-neutral-500 mt-1 block">Video Player Preview</span>
+                </div>
+              )}
             </div>
           )}
 
-          {/* WEBSITE SPECIFIC FIELDS */}
+          {/* 3. WEBSITE SPECIFIC FIELDS */}
           {formData.type === 'website' && (
-            <div className="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
+            <div className="p-6 bg-neutral-50/70 border border-neutral-200 rounded-2xl space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-wider text-neutral-900">
                 Website Showcase Fields
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                  <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                     Live Website URL
                   </label>
-                  <input
-                    type="url"
-                    placeholder="https://example.com"
-                    value={formData.website_url}
-                    onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://example.com"
+                      value={formData.website_url}
+                      onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
+                      className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
+                    />
+                    <button
+                      type="button"
+                      disabled={fetchingWebsite}
+                      onClick={() => handleAutoFetchWebsite()}
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs uppercase rounded-xl flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-xs"
+                    >
+                      {fetchingWebsite ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                      <span>Fetch Screenshot</span>
+                    </button>
+                  </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                  <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                     Design / Development Role
                   </label>
                   <input
@@ -630,10 +822,140 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     placeholder="UI/UX + Next.js Development"
                     value={formData.design_role}
                     onChange={(e) => setFormData({ ...formData, design_role: e.target.value })}
-                    className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
                   />
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* 4. GALLERY / ADDITIONAL IMAGES UPLOAD */}
+          <div className="p-6 bg-neutral-50/70 border border-neutral-200 rounded-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                  Additional Project Gallery Images
+                </h3>
+                <p className="text-xs text-neutral-500 mt-0.5">
+                  Gallery se multiple images upload karein taaki project page par carousel/grid ban sake.
+                </p>
+              </div>
+
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  ref={galleryFileInputRef}
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    for (const file of files) {
+                      await handleFileUpload(file, 'gallery');
+                    }
+                  }}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  disabled={uploadingFile}
+                  onClick={() => galleryFileInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-950 hover:bg-neutral-800 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Images to Gallery</span>
+                </button>
+              </div>
+            </div>
+
+            {formData.gallery && formData.gallery.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-2">
+                {formData.gallery.map((item, idx) => (
+                  <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-neutral-200 bg-white group shadow-2xs">
+                    <img src={item.url} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          gallery: formData.gallery?.filter((_, i) => i !== idx),
+                        })
+                      }
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      title="Remove image"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-6 text-center text-xs text-neutral-400 border border-dashed border-neutral-300 rounded-xl bg-white">
+                No additional gallery images added yet. Click above to upload.
+              </div>
+            )}
+          </div>
+
+          {/* Graphic Format Presets */}
+          {formData.type === 'graphic' && (
+            <div className="pt-4 border-t border-neutral-200 space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                Graphic Format & Aspect Ratio Preset
+              </h3>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {Object.keys(formatPresets).map((fmt) => (
+                  <button
+                    key={fmt}
+                    type="button"
+                    onClick={() => handleFormatSelect(fmt)}
+                    className={`p-3 text-xs text-left font-medium border rounded-xl transition-all cursor-pointer ${
+                      formData.format_name === fmt
+                        ? 'border-neutral-950 bg-neutral-950 text-white shadow-xs'
+                        : 'border-neutral-200 bg-white text-neutral-800 hover:border-neutral-400'
+                    }`}
+                  >
+                    <span className="block font-bold truncate">{fmt}</span>
+                    <span className="text-[10px] opacity-75">{formatPresets[fmt].ratio}</span>
+                  </button>
+                ))}
+              </div>
+
+              {formData.format_name === 'Custom' && (
+                <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl space-y-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
+                    Custom Dimension Calculator
+                  </span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] text-neutral-600 block mb-1">Width (px)</label>
+                      <input
+                        type="number"
+                        value={formData.custom_width}
+                        onChange={(e) => {
+                          const w = Number(e.target.value);
+                          calculateCustomRatio(w, formData.custom_height || 1080);
+                        }}
+                        className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-lg text-neutral-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-neutral-600 block mb-1">Height (px)</label>
+                      <input
+                        type="number"
+                        value={formData.custom_height}
+                        onChange={(e) => {
+                          const h = Number(e.target.value);
+                          calculateCustomRatio(formData.custom_width || 1080, h);
+                        }}
+                        className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-lg text-neutral-900"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500">
+                    Calculated Ratio: <strong>{formData.aspect_ratio}</strong> • Orientation: <strong>{formData.orientation}</strong>
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -641,13 +963,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 3: DETAILS & NARRATIVE */}
       {activeTab === 'details' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-6">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
             Narrative & Tool Stack
           </h2>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
               Full Project Description
             </label>
             <textarea
@@ -655,18 +977,18 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               placeholder="Detailed explanation of the creative brief, art direction, and methodology..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Software & Tools (Comma separated)
               </label>
               <input
                 type="text"
-                placeholder="Adobe Photoshop, Figma, Illustrator"
+                placeholder="Adobe Photoshop, Figma, Premiere Pro"
                 value={formData.tools?.join(', ')}
                 onChange={(e) =>
                   setFormData({
@@ -674,17 +996,17 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     tools: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
                   })
                 }
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Services Provided (Comma separated)
               </label>
               <input
                 type="text"
-                placeholder="Social Media Design, Art Direction"
+                placeholder="Video Editing, Motion Graphics, Art Direction"
                 value={formData.services?.join(', ')}
                 onChange={(e) =>
                   setFormData({
@@ -692,7 +1014,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     services: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
                   })
                 }
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
           </div>
@@ -701,14 +1023,14 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 4: CASE STUDY SPECIFIC NARRATIVE */}
       {activeTab === 'case_study' && formData.type === 'case_study' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-6">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
             Case Study Deep Dive
           </h2>
 
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+              <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                 Project Overview
               </label>
               <textarea
@@ -720,13 +1042,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     case_study: { ...formData.case_study, overview: e.target.value },
                   })
                 }
-                className="w-full p-2.5 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+                className="w-full p-3 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                   The Problem / Challenge
                 </label>
                 <textarea
@@ -738,12 +1060,12 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                       case_study: { ...formData.case_study, problem: e.target.value },
                     })
                   }
-                  className="w-full p-2.5 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+                  className="w-full p-3 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+                <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                   Strategic Goal
                 </label>
                 <textarea
@@ -755,13 +1077,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                       case_study: { ...formData.case_study, goal: e.target.value },
                     })
                   }
-                  className="w-full p-2.5 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+                  className="w-full p-3 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
+              <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
                 Strategy & Creative Direction
               </label>
               <textarea
@@ -773,13 +1095,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     case_study: { ...formData.case_study, creative_direction: e.target.value },
                   })
                 }
-                className="w-full p-2.5 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+                className="w-full p-3 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold uppercase text-neutral-700 dark:text-neutral-300 block mb-1">
-                Real Outcomes & Impact (Do not fabricate metrics)
+              <label className="text-xs font-bold uppercase text-neutral-700 block mb-1">
+                Real Outcomes & Impact
               </label>
               <textarea
                 rows={3}
@@ -790,7 +1112,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     case_study: { ...formData.case_study, results: e.target.value },
                   })
                 }
-                className="w-full p-2.5 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+                className="w-full p-3 text-xs bg-white border border-neutral-300 text-neutral-900 rounded-xl"
               />
             </div>
           </div>
@@ -799,13 +1121,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 5: SEO & METADATA */}
       {activeTab === 'seo' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-6">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
             SEO & OpenGraph Metadata
           </h2>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
               Custom SEO Title Tag
             </label>
             <input
@@ -818,12 +1140,12 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                   seo: { ...formData.seo, seo_title: e.target.value },
                 })
               }
-              className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
               SEO Meta Description (Under 160 chars)
             </label>
             <textarea
@@ -836,13 +1158,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                   seo: { ...formData.seo, seo_description: e.target.value },
                 })
               }
-              className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
                 Focus Keyword
               </label>
               <input
@@ -855,7 +1177,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     seo: { ...formData.seo, focus_keyword: e.target.value },
                   })
                 }
-                className="w-full px-3.5 py-2.5 text-sm bg-neutral-50 dark:bg-[#181818] border border-neutral-300 dark:border-neutral-700 rounded-xs"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
 
@@ -870,9 +1192,9 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                     seo: { ...formData.seo, no_index: e.target.checked },
                   })
                 }
-                className="w-4 h-4 rounded-xs"
+                className="w-4 h-4 rounded-md"
               />
-              <label htmlFor="noindex_cb" className="text-xs font-bold uppercase tracking-wider cursor-pointer">
+              <label htmlFor="noindex_cb" className="text-xs font-bold uppercase tracking-wider text-neutral-800 cursor-pointer">
                 Exclude from search indexing (noindex)
               </label>
             </div>
@@ -882,34 +1204,34 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
       {/* TAB 6: PUBLISHING & SEO READINESS CHECKLIST */}
       {activeTab === 'publishing' && (
-        <div className="bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800 space-y-6">
+        <div className="bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-400">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
               SEO Readiness & Content Quality Checklist
             </h2>
             <span
-              className={`px-2.5 py-1 text-xs font-bold uppercase rounded-xs ${
+              className={`px-3 py-1 text-xs font-bold uppercase rounded-full ${
                 canPublish
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                  : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-amber-50 text-amber-700 border border-amber-200'
               }`}
             >
               {canPublish ? 'Ready to Publish' : 'Action Required'}
             </span>
           </div>
 
-          <div className="space-y-3 divide-y divide-neutral-100 dark:divide-neutral-800">
+          <div className="space-y-3 divide-y divide-neutral-100">
             {validationChecks.map((item) => (
               <div key={item.name} className="pt-3 flex items-center justify-between text-xs">
-                <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                <span className="font-semibold text-neutral-800">
                   {item.name}
                 </span>
                 {item.valid ? (
-                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="inline-flex items-center gap-1 text-emerald-600 font-bold">
                     <CheckCircle className="w-4 h-4" /> Passed
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
+                  <span className="inline-flex items-center gap-1 text-amber-600 font-bold">
                     <AlertTriangle className="w-4 h-4" /> Incomplete
                   </span>
                 )}
@@ -917,8 +1239,8 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             ))}
           </div>
 
-          <div className="p-4 bg-neutral-50 dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 leading-relaxed">
-            <strong>Publishing Notice:</strong> This checklist validates structural data, search crawlability, and accessibility tokens. Newly published projects are automatically injected into the dynamic XML sitemap (<code className="text-neutral-800 dark:text-neutral-200">/sitemap.xml</code>).
+          <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs text-neutral-600 leading-relaxed">
+            <strong>Publishing Notice:</strong> This checklist validates structural data, search crawlability, and accessibility tokens. Newly published projects are automatically injected into the dynamic XML sitemap (<code className="text-neutral-900 font-semibold">/sitemap.xml</code>).
           </div>
 
           <div className="pt-4 flex justify-end gap-3">
@@ -926,7 +1248,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               type="button"
               disabled={saving}
               onClick={() => handleSave('draft')}
-              className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider border border-neutral-300 dark:border-neutral-700 rounded-xs"
+              className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider border border-neutral-300 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer"
             >
               Keep as Draft
             </button>
@@ -934,7 +1256,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               type="button"
               disabled={saving || !canPublish}
               onClick={() => handleSave('published')}
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xs disabled:opacity-40"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl disabled:opacity-40 hover:bg-neutral-800 shadow-xs transition-colors cursor-pointer"
             >
               Publish Now
             </button>

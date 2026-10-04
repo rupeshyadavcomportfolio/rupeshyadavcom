@@ -1,6 +1,67 @@
 {
   "projects": [
     {
+      "id": "proj-1791103878021",
+      "title": "www.nonisdigital.com/",
+      "slug": "https://www.nonisdigital.com/",
+      "type": "website",
+      "category": "Website Design",
+      "subcategory": "",
+      "client": "",
+      "year": "2026",
+      "short_description": "High-performance modern web application built for www.nonisdigital.com/.",
+      "description": "",
+      "tools": [
+        "Photoshop",
+        "Illustrator"
+      ],
+      "services": [
+        "Graphic Design"
+      ],
+      "tags": [
+        "design"
+      ],
+      "featured": false,
+      "status": "draft",
+      "order": 14,
+      "featured_image": "https://image.thum.io/get/width/1200/crop/800/nohttps://www.nonisdigital.com/animate/www.nonisdigital.com/",
+      "aspect_ratio": "16:9",
+      "format_name": "",
+      "orientation": "landscape",
+      "alt_text": "www.nonisdigital.com/ homepage preview screenshot by Rupesh Yadav",
+      "caption": "",
+      "video_url": "",
+      "video_type": "Short Video",
+      "duration": "0:30",
+      "website_url": "https://www.nonisdigital.com/",
+      "design_role": "Design + Development",
+      "development_role": "Next.js App Router",
+      "desktop_screenshot": "https://image.thum.io/get/width/1200/crop/800/noanimate/www.nonisdigital.com/",
+      "tablet_screenshot": "",
+      "mobile_screenshot": "",
+      "gallery": [],
+      "case_study": {
+        "overview": "",
+        "problem": "",
+        "goal": "",
+        "research": "",
+        "strategy": "",
+        "creative_direction": "",
+        "design_process": "",
+        "implementation": "",
+        "results": ""
+      },
+      "seo": {
+        "seo_title": "www.nonisdigital.com/ | Rupesh Yadav",
+        "seo_description": "High-performance modern web application built for www.nonisdigital.com/.",
+        "focus_keyword": "",
+        "canonical_url": "/work/website/https://www.nonisdigital.com/",
+        "no_index": false
+      },
+      "created_at": "2026-10-04T08:51:18.021Z",
+      "updated_at": "2026-10-04T08:51:18.021Z"
+    },
+    {
       "id": "proj-g1",
       "title": "Aura Sound — Audio Identity & Social Ad Campaign",
       "slug": "aura-sound-audio-identity-social-campaign",
@@ -768,16 +829,6 @@
       "created_at": "2026-02-10T12:00:00Z"
     },
     {
-      "id": "med-3",
-      "name": "kroma-streetwear-video.mp4",
-      "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      "type": "video",
-      "size": "8.4 MB",
-      "dimensions": "1080x1920",
-      "aspect_ratio": "9:16",
-      "created_at": "2026-03-01T15:00:00Z"
-    },
-    {
       "id": "med-4",
       "name": "strata-desktop-preview.jpg",
       "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
@@ -790,11 +841,11 @@
   ],
   "settings": {
     "name": "Rupesh Yadav",
-    "professional_title": "Graphic Designer • Video Creator • Web Designer",
+    "professional_title": "Graphic Designer • Video Editor • Web Designer",
     "bio": "Creative designer and video editor specializing in graphic design, high-retention video editing & reels, and modern website design. Helping brands, local businesses, and creators stand out with clean, impactful visuals and fast turnaround.",
     "roles": [
       "Graphic Designer",
-      "Video Creator",
+      "Video Editor",
       "Web Designer"
     ],
     "phone": "8839775265",
@@ -867,7 +918,7 @@
       }
     ],
     "footer_text": "Crafted with precision. Work first, credibility second, contact last.",
-    "default_seo_title": "Rupesh Yadav — Graphic Designer, Video Creator & Web Designer",
+    "default_seo_title": "Rupesh Yadav — Graphic Designer, Video Editor & Web Designer",
     "default_seo_description": "Official portfolio of Rupesh Yadav (@rupeshyadavcom). Explore graphic design, motion video, modern web experiences and creative case studies.",
     "default_og_image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&h=630&q=80",
     "google_analytics_id": "",

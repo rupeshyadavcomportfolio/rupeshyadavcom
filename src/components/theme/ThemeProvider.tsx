@@ -17,49 +17,29 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system');
+  const [theme, setThemeState] = useState<Theme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const savedTheme = (localStorage.getItem('rupesh-theme') as Theme) || 'system';
-    setThemeState(savedTheme);
+    // Strictly enforce clean white/light theme as requested ("black colour use mat karo")
+    setThemeState('light');
+    setResolvedTheme('light');
+    const root = document.documentElement;
+    root.classList.remove('dark');
+    try {
+      localStorage.removeItem('rupesh-theme');
+      localStorage.setItem('rupesh-theme', 'light');
+    } catch {}
   }, []);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function applyTheme() {
-      let isDark = false;
-      if (theme === 'system') {
-        isDark = mediaQuery.matches;
-      } else {
-        isDark = theme === 'dark';
-      }
-
-      setResolvedTheme(isDark ? 'dark' : 'light');
-      if (isDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    }
-
-    applyTheme();
-
-    const listener = () => {
-      if (theme === 'system') {
-        applyTheme();
-      }
-    };
-
-    mediaQuery.addEventListener('change', listener);
-    return () => mediaQuery.removeEventListener('change', listener);
-  }, [theme]);
-
   const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    localStorage.setItem('rupesh-theme', newTheme);
+    setThemeState('light');
+    setResolvedTheme('light');
+    const root = document.documentElement;
+    root.classList.remove('dark');
+    try {
+      localStorage.setItem('rupesh-theme', 'light');
+    } catch {}
   };
 
   return (

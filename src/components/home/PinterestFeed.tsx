@@ -74,44 +74,50 @@ export function PinterestFeed({
 
   return (
     <div className="w-full">
-      {/* Pinterest-Style Floating Filter Chips */}
-      <div className="sticky top-20 z-30 bg-white/95 dark:bg-[#0c0c0c]/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 py-3 mb-6 transition-colors">
+      {/* Clean Light Floating Filter Chips */}
+      <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 py-3.5 mb-6 shadow-2xs transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          {/* Scrollable category pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setActiveTab(tab.value)}
-                className={`px-4 py-2 text-xs font-bold whitespace-nowrap rounded-full transition-all cursor-pointer ${
-                  activeTab === tab.value
-                    ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-sm scale-102'
-                    : 'bg-neutral-100 dark:bg-neutral-800/80 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          {/* Scrollable category pills (Scrollbar completely hidden) */}
+          <div
+            className="flex items-center gap-2 overflow-x-auto py-1 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {filterTabs.map((tab) => {
+              const isActive = activeTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`px-4 py-2 text-xs font-bold whitespace-nowrap rounded-full transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-neutral-950 text-white shadow-xs font-black scale-102'
+                      : 'bg-neutral-100 border border-neutral-200/80 text-neutral-700 hover:bg-neutral-200 hover:text-neutral-950'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Quick Search */}
-          <div className="relative shrink-0 w-full sm:w-56">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
+          <div className="relative shrink-0 w-full sm:w-64">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
             <input
               type="text"
-              placeholder="Search pins..."
+              placeholder="Search creative work..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs bg-neutral-100 dark:bg-neutral-800/80 border-none rounded-full focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-600"
+              className="w-full pl-9 pr-8 py-2 text-xs bg-neutral-50 border border-neutral-200 rounded-full focus:outline-none focus:border-neutral-900 focus:bg-white text-neutral-900 placeholder:text-neutral-400 transition-all shadow-2xs"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black dark:hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 cursor-pointer"
               >
-                <X className="w-3 h-3" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -121,7 +127,7 @@ export function PinterestFeed({
       {/* Pinterest Masonry Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         {filteredProjects.length === 0 ? (
-          <div className="py-24 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl">
+          <div className="py-24 text-center border border-dashed border-neutral-200 rounded-2xl">
             <p className="text-sm text-neutral-500 font-medium">
               No pins found for "{searchQuery || activeTab}". Try another filter.
             </p>
@@ -135,7 +141,7 @@ export function PinterestFeed({
                 <div
                   key={project.id}
                   onClick={() => setSelectedPin(project)}
-                  className="break-inside-avoid mb-4 group relative rounded-2xl overflow-hidden cursor-zoom-in bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-800/60 shadow-xs hover:shadow-xl transition-all duration-300"
+                  className="break-inside-avoid mb-4 group relative rounded-2xl overflow-hidden cursor-zoom-in bg-neutral-100 border border-neutral-200/80 shadow-xs hover:shadow-xl transition-all duration-300"
                 >
                   {/* Pin Image */}
                   <img
@@ -214,13 +220,13 @@ export function PinterestFeed({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row my-auto"
+            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-neutral-200 flex flex-col md:flex-row my-auto"
           >
             {/* Close Button */}
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer shadow-md"
+              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/90 text-neutral-700 hover:bg-neutral-100 cursor-pointer shadow-md border border-neutral-200"
             >
               <X className="w-5 h-5" />
             </button>
@@ -245,15 +251,15 @@ export function PinterestFeed({
             </div>
 
             {/* Right Side: Minimal Specs & Actions */}
-            <div className="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+            <div className="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto bg-white">
               <div className="space-y-4">
                 {/* Creator info */}
-                <div className="flex items-center gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
-                  <div className="w-10 h-10 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-black flex items-center justify-center font-black text-xs">
+                <div className="flex items-center gap-3 pb-3 border-b border-neutral-100">
+                  <div className="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-black text-xs">
                     RY
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-neutral-950 dark:text-white leading-tight">
+                    <h4 className="text-sm font-bold text-neutral-950 leading-tight">
                       Rupesh Yadav
                     </h4>
                     <span className="text-[11px] text-neutral-500 font-medium">
@@ -264,26 +270,26 @@ export function PinterestFeed({
 
                 {/* Aspect ratio & Category pills */}
                 <div className="flex flex-wrap gap-1.5">
-                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 rounded-full">
+                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-neutral-100 text-neutral-800 rounded-full">
                     {selectedPin.aspect_ratio || '16:9'}
                   </span>
-                  <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 rounded-full">
+                  <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 rounded-full">
                     {selectedPin.category}
                   </span>
                   {selectedPin.format_name && (
-                    <span className="px-2.5 py-1 text-[10px] font-medium border border-neutral-200 dark:border-neutral-800 rounded-full">
+                    <span className="px-2.5 py-1 text-[10px] font-medium border border-neutral-200 rounded-full text-neutral-600">
                       {selectedPin.format_name}
                     </span>
                   )}
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl sm:text-2xl font-black text-neutral-950 dark:text-white leading-tight">
+                <h2 className="text-xl sm:text-2xl font-black text-neutral-950 leading-tight">
                   {selectedPin.title}
                 </h2>
 
                 {/* Short specs */}
-                <div className="text-xs text-neutral-600 dark:text-neutral-400 space-y-1.5 pt-1">
+                <div className="text-xs text-neutral-600 space-y-1.5 pt-1">
                   {selectedPin.client && (
                     <p>
                       <strong>Client:</strong> {selectedPin.client}
@@ -300,7 +306,7 @@ export function PinterestFeed({
                 </div>
 
                 {selectedPin.short_description && (
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                  <p className="text-xs text-neutral-600 leading-relaxed pt-2 border-t border-neutral-100">
                     {selectedPin.short_description}
                   </p>
                 )}
@@ -325,7 +331,7 @@ export function PinterestFeed({
                         ? `/case-study/${selectedPin.slug}`
                         : `/work/${selectedPin.type}/${selectedPin.slug}`
                     }
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-full hover:opacity-90 transition-opacity"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-opacity"
                   >
                     <span>Full Case Details</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -336,7 +342,7 @@ export function PinterestFeed({
                       href={selectedPin.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2.5 text-xs font-bold uppercase border border-neutral-300 dark:border-neutral-700 rounded-full flex items-center gap-1"
+                      className="px-4 py-2.5 text-xs font-bold uppercase border border-neutral-300 rounded-full flex items-center gap-1 text-neutral-800 hover:bg-neutral-100"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>

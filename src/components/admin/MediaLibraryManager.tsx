@@ -3,40 +3,41 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { MediaItem } from '@/types/portfolio';
-import { Upload, Copy, Check, Trash2, Image, Video, Plus, Loader2 } from 'lucide-react';
+import { Upload, Copy, Check, Trash2, Plus, Video, Loader2 } from 'lucide-react';
 
 export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[] }) {
   const router = useRouter();
   const [mediaList, setMediaList] = useState<MediaItem[]>(initialMedia);
   const [uploading, setUploading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  // Manual URL registration state
   const [showAddUrl, setShowAddUrl] = useState(false);
-  const [manualName, setManualName] = useState('');
   const [manualUrl, setManualUrl] = useState('');
-  const [manualType, setManualType] = useState<'image' | 'video'>('image');
+  const [manualName, setManualName] = useState('');
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     setUploading(true);
-    try {
-      const file = files[0];
-      const formData = new FormData();
-      formData.append('file', file);
+    const formData = new FormData();
+    formData.append('file', file);
 
+    try {
       const res = await fetch('/api/media', {
         method: 'POST',
         body: formData,
       });
 
-      if (res.ok) {
-        const item = await res.json();
-        setMediaList([item, ...mediaList]);
-        router.refresh();
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Upload failed');
       }
+
+      const item = await res.json();
+      setMediaList([item, ...mediaList]);
+      router.refresh();
+    } catch (err: any) {
+      alert(`Upload failed: ${err.message}`);
     } finally {
       setUploading(false);
     }
@@ -48,22 +49,25 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
 
     setUploading(true);
     try {
+      const isVideo = /\.(mp4|webm|mov)$/i.test(manualUrl);
       const res = await fetch('/api/media', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: manualName || 'external-asset',
+          name: manualName || manualUrl.split('/').pop() || 'media_asset',
           url: manualUrl,
-          type: manualType,
+          type: isVideo ? 'video' : 'image',
+          size: 'External',
+          dimensions: 'Unknown',
         }),
       });
 
       if (res.ok) {
         const item = await res.json();
         setMediaList([item, ...mediaList]);
-        setShowAddUrl(false);
-        setManualName('');
         setManualUrl('');
+        setManualName('');
+        setShowAddUrl(false);
         router.refresh();
       }
     } finally {
@@ -88,23 +92,23 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs">
         <div>
           <span className="text-xs uppercase tracking-widest font-bold text-neutral-400">
             Assets Storage
           </span>
-          <h1 className="text-2xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-950 mt-1">
             MEDIA ASSET LIBRARY
           </h1>
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
             Upload images, project screenshots, and video assets, or register external CDN URLs.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xs cursor-pointer hover:opacity-90">
+        <div className="flex items-center gap-2.5">
+          <label className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-xs cursor-pointer transition-colors">
             {uploading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
@@ -123,7 +127,7 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
           <button
             type="button"
             onClick={() => setShowAddUrl(!showAddUrl)}
-            className="inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider border border-neutral-300 hover:bg-neutral-50 text-neutral-800 rounded-xl shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add URL</span>
@@ -133,8 +137,8 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
 
       {/* Manual URL Form */}
       {showAddUrl && (
-        <form onSubmit={handleAddManualUrl} className="p-4 bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+        <form onSubmit={handleAddManualUrl} className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-md space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
             Register External Image / Video URL (e.g. Cloudinary, Unsplash)
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -143,7 +147,7 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
               placeholder="Filename / Title"
               value={manualName}
               onChange={(e) => setManualName(e.target.value)}
-              className="p-2 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs"
+              className="px-3.5 py-2.5 text-xs bg-neutral-50 hover:bg-neutral-50/80 focus:bg-white text-neutral-900 border border-neutral-300 rounded-xl focus:outline-none focus:border-neutral-950"
             />
             <input
               type="url"
@@ -151,21 +155,21 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
               placeholder="https://images.unsplash.com/..."
               value={manualUrl}
               onChange={(e) => setManualUrl(e.target.value)}
-              className="p-2 text-xs bg-neutral-50 dark:bg-[#181818] border rounded-xs sm:col-span-2"
+              className="px-3.5 py-2.5 text-xs bg-neutral-50 hover:bg-neutral-50/80 focus:bg-white text-neutral-900 border border-neutral-300 rounded-xl focus:outline-none focus:border-neutral-950 sm:col-span-2"
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2.5">
             <button
               type="button"
               onClick={() => setShowAddUrl(false)}
-              className="px-3 py-1.5 text-xs border rounded-xs"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="px-4 py-1.5 text-xs font-bold uppercase bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xs"
+              className="px-5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-xs disabled:opacity-50 transition-colors cursor-pointer"
             >
               Register Asset
             </button>
@@ -178,20 +182,20 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
         {mediaList.map((item) => (
           <div
             key={item.id}
-            className="group flex flex-col bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 overflow-hidden"
+            className="group flex flex-col bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow"
           >
-            <div className="relative aspect-square bg-neutral-100 dark:bg-neutral-900 overflow-hidden flex items-center justify-center">
+            <div className="relative aspect-square bg-neutral-100 overflow-hidden flex items-center justify-center">
               {item.type === 'video' ? (
-                <div className="flex flex-col items-center justify-center text-neutral-400">
-                  <Video className="w-8 h-8 mb-1" />
-                  <span className="text-[10px] font-bold uppercase">Video File</span>
+                <div className="flex flex-col items-center justify-center text-neutral-500">
+                  <Video className="w-8 h-8 mb-1 text-neutral-700" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Video File</span>
                 </div>
               ) : (
                 <img
                   src={item.url}
                   alt={item.name}
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               )}
 
@@ -199,16 +203,16 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
               <button
                 type="button"
                 onClick={() => handleCopy(item.id, item.url)}
-                className="absolute top-2 right-2 p-1.5 rounded-xs bg-black/70 text-white hover:bg-black transition-colors"
+                className="absolute top-2 right-2 p-1.5 rounded-lg bg-neutral-900/80 hover:bg-neutral-900 text-white shadow-xs transition-colors cursor-pointer"
                 title="Copy URL"
               >
                 {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               </button>
             </div>
 
-            <div className="p-3 flex flex-col flex-1 justify-between text-xs">
+            <div className="p-3.5 flex flex-col flex-1 justify-between text-xs">
               <div>
-                <span className="font-bold text-neutral-950 dark:text-white block truncate" title={item.name}>
+                <span className="font-bold text-neutral-950 block truncate" title={item.name}>
                   {item.name}
                 </span>
                 <span className="text-[10px] text-neutral-400 block mt-0.5">
@@ -216,18 +220,18 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
                 </span>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-[11px]">
+              <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between text-[11px]">
                 <button
                   type="button"
                   onClick={() => handleCopy(item.id, item.url)}
-                  className="text-neutral-500 hover:text-neutral-950 dark:hover:text-white font-medium cursor-pointer"
+                  className="text-neutral-600 hover:text-neutral-950 font-bold uppercase tracking-wider cursor-pointer"
                 >
                   {copiedId === item.id ? 'Copied!' : 'Copy Link'}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(item.id)}
-                  className="text-red-500 hover:text-red-700 p-0.5 cursor-pointer"
+                  className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                   title="Delete"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About Rupesh Yadav — Graphic Designer, Video Creator & Web Designer',
+  title: 'About Rupesh Yadav — Graphic Designer, Video Editor & Web Designer',
   description:
-    'Learn about Rupesh Yadav (@rupeshyadavcom) — verified Facebook, LinkedIn, Instagram profiles, creative background, and verified contact details.',
+    'Learn about Rupesh Yadav (@rupeshyadavcom) — verified Facebook, LinkedIn, Instagram, YouTube, Behance profiles, creative background, and verified contact details.',
 };
 
 export default async function AboutPage() {
@@ -21,168 +21,156 @@ export default async function AboutPage() {
 
   return (
     <div className="w-full py-10 md:py-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-full mb-3">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Verified Creative Professional
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-1">
+          <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-neutral-950 mt-1">
             RUPESH YADAV
           </h1>
-          <p className="text-sm sm:text-base font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mt-2">
-            Graphic Designer • Video Creator • Web Designer
+          <p className="text-sm sm:text-base font-semibold uppercase tracking-wider text-neutral-600 mt-2">
+            Graphic Designer • Video Editor • Web Designer
           </p>
         </div>
 
         {/* Hero Profile Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* Left Column: Photo + Verified Profiles Card */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900 border-2 border-neutral-900 dark:border-neutral-700 shadow-xl group">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Left Column: Authentic Profile Photo */}
+          <div className="lg:col-span-5 sticky top-28">
+            <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-neutral-100 border border-neutral-200 shadow-lg group">
               <img
                 src={settings.profile_photo || '/rupesh-yadav.png'}
-                alt="Rupesh Yadav - Graphic Designer, Video Creator & Web Designer"
-                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                alt="Rupesh Yadav - Graphic Designer, Video Editor & Web Designer"
+                className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500"
               />
-              <div className="absolute bottom-3 left-3 right-3 bg-white/95 dark:bg-black/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-xs font-bold">
-                <span className="flex items-center gap-2 text-neutral-900 dark:text-white">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl border border-neutral-200 flex items-center justify-between text-xs font-bold shadow-md">
+                <span className="flex items-center gap-2 text-neutral-900 font-black">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   Rupesh Yadav
                 </span>
-                <span className="text-neutral-500 uppercase tracking-wider">@rupeshyadavcom</span>
-              </div>
-            </div>
-
-            {/* Verified Social Media Profiles */}
-            <div className="p-6 bg-neutral-50 dark:bg-[#111111] border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-black uppercase tracking-wider text-neutral-950 dark:text-white flex items-center gap-2">
-                  <Share2 className="w-4 h-4 text-emerald-500" />
-                  Official Social Profiles
-                </h3>
-                <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                  Verified
-                </span>
-              </div>
-
-              <div className="space-y-2.5 text-xs font-bold">
-                {/* Facebook */}
-                <a
-                  href="https://www.facebook.com/rupeshyadavcom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-blue-600 hover:text-blue-600 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-sm">
-                      f
-                    </span>
-                    <div>
-                      <div className="text-neutral-950 dark:text-white group-hover:text-blue-600">Facebook</div>
-                      <div className="text-[11px] font-normal text-neutral-500">facebook.com/rupeshyadavcom</div>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                </a>
-
-                {/* LinkedIn */}
-                <a
-                  href="https://www.linkedin.com/in/rupeshyadavcom/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-[#0A66C2] hover:text-[#0A66C2] transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-[#0A66C2] text-white flex items-center justify-center font-black text-xs">
-                      in
-                    </span>
-                    <div>
-                      <div className="text-neutral-950 dark:text-white group-hover:text-[#0A66C2]">LinkedIn</div>
-                      <div className="text-[11px] font-normal text-neutral-500">linkedin.com/in/rupeshyadavcom</div>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href="https://instagram.com/rupeshyadavcom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-pink-600 hover:text-pink-600 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-gradient-to-tr from-yellow-500 via-pink-600 to-purple-600 text-white flex items-center justify-center font-black text-xs">
-                      IG
-                    </span>
-                    <div>
-                      <div className="text-neutral-950 dark:text-white group-hover:text-pink-600">Instagram</div>
-                      <div className="text-[11px] font-normal text-neutral-500">@rupeshyadavcom</div>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                </a>
-              </div>
-            </div>
-
-            {/* Direct Contact Box */}
-            <div className="p-6 bg-neutral-50 dark:bg-[#111111] border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
-                Direct Contact
-              </h3>
-              <div className="space-y-2.5 text-sm font-semibold">
-                <a
-                  href={`tel:${settings.phone}`}
-                  className="flex items-center gap-3 text-neutral-900 dark:text-neutral-100 hover:text-emerald-500 transition-colors"
-                >
-                  <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>+91 {settings.phone}</span>
-                </a>
-                <a
-                  href={`mailto:${settings.email}`}
-                  className="flex items-center gap-3 text-neutral-900 dark:text-neutral-100 hover:text-emerald-500 transition-colors"
-                >
-                  <Mail className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>{settings.email}</span>
-                </a>
-                <div className="flex items-center gap-3 text-neutral-900 dark:text-neutral-100">
-                  <AtSign className="w-4 h-4 text-neutral-400 shrink-0" />
-                  <span>{settings.social_handle}</span>
-                </div>
-              </div>
-
-              <div className="pt-3">
-                <a
-                  href={`https://wa.me/91${settings.phone}?text=Hi%20Rupesh,%20I%20saw%20your%20portfolio%20and%20want%20to%20discuss%20a%20project!`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-sm"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Chat on WhatsApp
-                </a>
+                <span className="text-neutral-500 uppercase tracking-wider font-semibold">@rupeshyadavcom</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Clean Bio & Direct CTAs */}
+          {/* Right Column: Bio Details + Social Profiles + Direct Contact */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="space-y-5">
-              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-950 dark:text-white">
+            {/* Bio Details */}
+            <div className="space-y-4">
+              <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950">
                 Hi, I'm Rupesh Yadav.
               </h2>
-              <p className="text-base sm:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                I am a dedicated <strong>Graphic Designer, Video Creator, and Web Designer</strong> based in India. I work directly with business owners, brands, creators, and agencies to deliver crisp, high-impact visuals that turn casual viewers into paying clients.
+              <p className="text-base sm:text-lg text-neutral-700 leading-relaxed">
+                I am a dedicated <strong>Graphic Designer, Video Editor, and Web Designer</strong> based in India. I work directly with business owners, brands, creators, and agencies to deliver crisp, high-impact visuals that turn casual viewers into paying clients.
               </p>
-              <p className="text-base sm:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              <p className="text-base sm:text-lg text-neutral-700 leading-relaxed">
                 Whether you need scroll-stopping social media creatives, high-retention video reels that keep audiences hooked, or a modern, fast website for your business — I handle everything with <strong>speed, precision, and direct communication</strong>.
               </p>
             </div>
 
+            {/* Social Profiles & Direct Contact Grid (Right under details as requested) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+              {/* SOCIAL PROFILES Card (Matching Screenshot 2) */}
+              <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-xs space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500">
+                  Social Profiles
+                </h3>
+                <div className="space-y-3 text-xs font-semibold">
+                  <a
+                    href="https://www.facebook.com/rupeshyadavcom"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between text-neutral-900 hover:text-blue-600 transition-colors py-0.5"
+                  >
+                    <span>Facebook</span>
+                    <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/rupeshyadavcom/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between text-neutral-900 hover:text-[#0A66C2] transition-colors py-0.5"
+                  >
+                    <span>LinkedIn</span>
+                    <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+                  </a>
+                  <a
+                    href="https://instagram.com/rupeshyadavcom"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between text-neutral-900 hover:text-pink-600 transition-colors py-0.5"
+                  >
+                    <span>Instagram</span>
+                    <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+                  </a>
+                  <a
+                    href="https://youtube.com/@rupeshyadavcom"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between text-neutral-900 hover:text-red-600 transition-colors py-0.5"
+                  >
+                    <span>YouTube</span>
+                    <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+                  </a>
+                  <a
+                    href="https://behance.net/rupeshyadavcom"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between text-neutral-900 hover:text-blue-700 transition-colors py-0.5"
+                  >
+                    <span>Behance</span>
+                    <ArrowUpRight className="w-4 h-4 text-neutral-400" />
+                  </a>
+                </div>
+              </div>
+
+              {/* DIRECT CONTACT Card (Matching Screenshot 5) */}
+              <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-xs flex flex-col justify-between space-y-4">
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
+                    Direct Contact
+                  </h3>
+                  <div className="space-y-3.5 text-xs font-bold">
+                    <a
+                      href={`tel:${settings.phone}`}
+                      className="flex items-center gap-2.5 text-neutral-900 hover:text-emerald-600 transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>+91 {settings.phone}</span>
+                    </a>
+                    <a
+                      href={`mailto:${settings.email}`}
+                      className="flex items-center gap-2.5 text-neutral-900 hover:text-emerald-600 transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">{settings.email}</span>
+                    </a>
+                    <div className="flex items-center gap-2.5 text-neutral-900">
+                      <AtSign className="w-4 h-4 text-neutral-500 shrink-0" />
+                      <span>{settings.social_handle}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <a
+                    href={`https://wa.me/91${settings.phone}?text=Hi%20Rupesh,%20I%20saw%20your%20portfolio%20and%20want%20to%20discuss%20a%20project!`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    Chat on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+
             {/* Quick CTAs */}
-            <div className="pt-4 flex flex-wrap items-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center gap-4">
               <a
                 href={`https://wa.me/91${settings.phone}?text=Hi%20Rupesh,%20I%20am%20interested%20in%20working%20with%20you!`}
                 target="_blank"
@@ -194,7 +182,7 @@ export default async function AboutPage() {
               </a>
               <Link
                 href="/work"
-                className="inline-flex items-center gap-2 px-6 py-4 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xl hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 px-6 py-4 text-xs font-bold uppercase tracking-wider bg-neutral-900 text-white rounded-xl hover:opacity-90 transition-opacity"
               >
                 VIEW MY WORK
                 <ArrowUpRight className="w-4 h-4" />

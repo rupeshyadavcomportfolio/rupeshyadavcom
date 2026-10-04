@@ -11,12 +11,74 @@ export function Hero({
   photo?: string;
 }) {
   return (
-    <section className="w-full pt-8 pb-10 md:pt-12 md:pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-neutral-200 dark:border-neutral-800">
+    <section className="relative w-full pt-8 pb-10 md:pt-12 md:pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
+      {/* Low-Opacity Designer Vector Background */}
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden select-none"
+        aria-hidden="true"
+      >
+        {/* Subtle Designer Grid Pattern */}
+        <svg
+          className="absolute inset-0 w-full h-full opacity-[0.045] text-neutral-900"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern
+              id="hero-grid-pattern"
+              width="48"
+              height="48"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 48 0 L 0 0 0 48"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+              <circle cx="48" cy="0" r="1.5" fill="currentColor" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-grid-pattern)" />
+        </svg>
+
+        {/* Abstract Creative Bezier & Wave Vector Lines (Graphic & Video Editing Motif) */}
+        <svg
+          className="absolute -top-10 -right-10 w-[550px] h-[280px] opacity-[0.06] text-neutral-900"
+          viewBox="0 0 600 300"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M 0 180 C 150 80, 300 240, 450 120 S 600 60, 650 140"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M 0 120 C 180 220, 320 60, 480 180 S 620 100, 650 200"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeDasharray="6 6"
+          />
+          <path
+            d="M 50 60 C 200 150, 350 40, 520 140"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
+          {/* Keyframe / Anchor Points */}
+          <rect x="145" y="105" width="10" height="10" transform="rotate(45 150 110)" stroke="currentColor" strokeWidth="2" fill="white" />
+          <rect x="445" y="115" width="10" height="10" transform="rotate(45 450 120)" stroke="currentColor" strokeWidth="2" fill="white" />
+          <circle cx="300" cy="180" r="5" stroke="currentColor" strokeWidth="2" />
+        </svg>
+
+        {/* Soft Radial Fade Overlay so content stays crisp & high-contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white/80 pointer-events-none" />
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-neutral-200">
         {/* Profile Avatar + Name + Roles */}
         <div className="flex items-center gap-4 sm:gap-6">
           {/* Rupesh's Authentic Profile Image */}
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-neutral-900 dark:border-white shadow-xl shrink-0 bg-neutral-100 dark:bg-neutral-800">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-neutral-200 shadow-md shrink-0 bg-neutral-100">
             <img
               src={photo || '/rupesh-yadav.png'}
               alt="Rupesh Yadav"
@@ -24,23 +86,23 @@ export function Hero({
             />
             <span
               title="Available for projects"
-              className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white dark:border-black"
+              className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white"
             />
           </div>
 
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] uppercase tracking-widest font-black text-neutral-500 dark:text-neutral-400">
+              <span className="text-[11px] uppercase tracking-widest font-black text-neutral-500">
                 AVAILABLE FOR NEW WORK • @rupeshyadavcom
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-neutral-950 dark:text-white uppercase leading-none">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-neutral-950 uppercase leading-none">
               RUPESH YADAV
             </h1>
-            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mt-1.5">
-              Graphic Designer • Video Creator • Web Designer
+            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-500 mt-1.5">
+              Graphic Designer • Video Editor • Web Designer
             </p>
           </div>
         </div>
@@ -49,19 +111,19 @@ export function Hero({
         <div className="flex flex-wrap items-center gap-2">
           <a
             href="#graphic-section"
-            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors rounded-full"
+            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 border border-neutral-200 text-neutral-800 hover:bg-neutral-200 hover:text-neutral-950 transition-colors rounded-full"
           >
             Graphic Work ↓
           </a>
           <a
             href="#video-section"
-            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors rounded-full"
+            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 border border-neutral-200 text-neutral-800 hover:bg-neutral-200 hover:text-neutral-950 transition-colors rounded-full"
           >
             Video Work ↓
           </a>
           <a
             href="#website-section"
-            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors rounded-full"
+            className="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-100 border border-neutral-200 text-neutral-800 hover:bg-neutral-200 hover:text-neutral-950 transition-colors rounded-full"
           >
             Websites ↓
           </a>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactMessage } from '@/types/portfolio';
-import { Mail, Phone, Building, Calendar, Trash2, CheckCircle2, MessageSquare, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, Building, Calendar, Trash2, ArrowUpRight } from 'lucide-react';
 
 export function MessagesManager({ initialMessages }: { initialMessages: ContactMessage[] }) {
   const router = useRouter();
@@ -39,17 +39,17 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#121212] p-6 border border-neutral-200 dark:border-neutral-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 border border-neutral-200 rounded-2xl shadow-xs">
         <div>
           <span className="text-xs uppercase tracking-widest font-bold text-neutral-400">
             Inbox
           </span>
-          <h1 className="text-2xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-950 mt-1">
             CLIENT INQUIRIES & MESSAGES
           </h1>
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
             Review incoming project briefs, contact form submissions, and direct leads.
           </p>
         </div>
@@ -61,10 +61,10 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
               key={tab}
               type="button"
               onClick={() => setFilter(tab)}
-              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-xs cursor-pointer ${
+              className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer ${
                 filter === tab
-                  ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950'
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
+                  ? 'bg-neutral-950 text-white shadow-xs'
+                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
               }`}
             >
               {tab}
@@ -75,41 +75,41 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
 
       {/* Messages List */}
       {filtered.length === 0 ? (
-        <div className="py-20 text-center bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 rounded-xs">
-          <p className="text-sm text-neutral-500">No inquiries found in this category.</p>
+        <div className="py-20 text-center bg-white border border-neutral-200 rounded-2xl shadow-xs">
+          <p className="text-sm font-medium text-neutral-500">No inquiries found in this category.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((msg) => (
             <div
               key={msg.id}
-              className="p-6 bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 rounded-xs space-y-4"
+              className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-xs space-y-4"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 pb-3">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-base font-bold text-neutral-950 dark:text-white">
+                  <h3 className="text-base font-bold text-neutral-950">
                     {msg.name}
                   </h3>
                   {msg.company && (
-                    <span className="text-xs text-neutral-500 font-medium flex items-center gap-1">
+                    <span className="text-xs text-neutral-600 font-medium flex items-center gap-1">
                       <Building className="w-3.5 h-3.5" />
                       {msg.company}
                     </span>
                   )}
                   {msg.service && (
-                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 rounded-xs">
+                    <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 rounded-full border border-neutral-200">
                       {msg.service}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-neutral-400">
+                <div className="flex items-center gap-2 text-xs text-neutral-500">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>{new Date(msg.created_at).toLocaleDateString()}</span>
                   <select
                     value={msg.status}
                     onChange={(e) => handleUpdateStatus(msg.id, e.target.value as any)}
-                    className="ml-2 px-2 py-1 text-[11px] font-bold uppercase rounded-xs bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+                    className="ml-2 px-2.5 py-1 text-[11px] font-bold uppercase rounded-lg bg-neutral-50 border border-neutral-300 text-neutral-800"
                   >
                     <option value="unread">Unread</option>
                     <option value="read">Read</option>
@@ -120,16 +120,16 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
               </div>
 
               {/* Message Body */}
-              <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed whitespace-pre-line bg-neutral-50/50 dark:bg-[#181818] p-4 rounded-xs border border-neutral-100 dark:border-neutral-800">
+              <p className="text-sm text-neutral-900 leading-relaxed whitespace-pre-line bg-neutral-50/80 p-4 rounded-xl border border-neutral-200">
                 {msg.message}
               </p>
 
               {/* Contact info and actions */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1">
-                <div className="flex flex-wrap items-center gap-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                <div className="flex flex-wrap items-center gap-4 text-neutral-600 font-medium">
                   <a
                     href={`mailto:${msg.email}`}
-                    className="inline-flex items-center gap-1.5 hover:text-neutral-950 dark:hover:text-white"
+                    className="inline-flex items-center gap-1.5 hover:text-neutral-950 font-semibold"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>{msg.email}</span>
@@ -137,7 +137,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                   {msg.phone && (
                     <a
                       href={`tel:${msg.phone}`}
-                      className="inline-flex items-center gap-1.5 hover:text-neutral-950 dark:hover:text-white"
+                      className="inline-flex items-center gap-1.5 hover:text-neutral-950 font-semibold"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>{msg.phone}</span>
@@ -148,7 +148,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                 <div className="flex items-center gap-2">
                   <a
                     href={`mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.service || 'Creative Project Inquiry'} - Rupesh Yadav`)}`}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 font-bold uppercase tracking-wider text-xs bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 rounded-xs"
+                    className="inline-flex items-center gap-1 px-4 py-2 font-bold uppercase tracking-wider text-xs bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-xs transition-colors"
                   >
                     <span>Reply via Email</span>
                     <ArrowUpRight className="w-3 h-3" />
@@ -156,10 +156,10 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                   <button
                     type="button"
                     onClick={() => handleDelete(msg.id)}
-                    className="p-1.5 text-red-500 hover:text-red-700 bg-red-500/10 rounded-xs cursor-pointer"
+                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
                     title="Delete Message"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>

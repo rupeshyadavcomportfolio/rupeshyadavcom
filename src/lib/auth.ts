@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 
 const ADMIN_COOKIE_NAME = 'rupesh_admin_token';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@rupeshyadav.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'rupesh@2026';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'rupeshyadav2610@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Kriti@2810';
 
 export async function isAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
@@ -27,5 +27,6 @@ export async function clearAdminSession() {
 }
 
 export function verifyCredentials(email: string, pass: string): boolean {
-  return email === ADMIN_EMAIL && pass === ADMIN_PASSWORD;
+  if (!email || !pass) return false;
+  return email.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase() && pass === ADMIN_PASSWORD;
 }

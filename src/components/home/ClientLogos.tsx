@@ -38,20 +38,20 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
   }
 
   return (
-    <section className="w-full py-14 md:py-20 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0c]/50">
+    <section className="w-full py-14 md:py-20 border-t border-neutral-200 bg-neutral-50/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title and Scroll Arrows */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-xs font-bold uppercase tracking-wider rounded-full mb-2.5">
-              <Award className="w-3.5 h-3.5 text-amber-500" />
-              Verified Client Brands
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wider rounded-full mb-2.5">
+              <Award className="w-3.5 h-3.5 text-amber-600" />
+              Verified Client Work
             </div>
-            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-neutral-950 dark:text-white">
-              CLIENTS & COLLABORATIONS
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-neutral-950">
+              OUR CLIENTS
             </h2>
-            <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-              Scroll left & right to explore partner brands, local businesses, and client projects.
+            <p className="text-xs md:text-sm text-neutral-600 mt-1">
+              Brands, local businesses, and client projects I've worked with.
             </p>
           </div>
 
@@ -63,8 +63,8 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
               aria-label="Scroll left"
               className={`p-2.5 rounded-full border transition-all ${
                 canScrollLeft
-                  ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black shadow-sm'
-                  : 'border-neutral-200 dark:border-neutral-800/60 bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+                  ? 'border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-100 shadow-sm cursor-pointer'
+                  : 'border-neutral-200 bg-neutral-100/70 text-neutral-400 cursor-not-allowed'
               }`}
             >
               <ChevronLeft className="w-5 h-5" />
@@ -75,8 +75,8 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
               aria-label="Scroll right"
               className={`p-2.5 rounded-full border transition-all ${
                 canScrollRight
-                  ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black shadow-sm'
-                  : 'border-neutral-200 dark:border-neutral-800/60 bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+                  ? 'border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-100 shadow-sm cursor-pointer'
+                  : 'border-neutral-200 bg-neutral-100/70 text-neutral-400 cursor-not-allowed'
               }`}
             >
               <ChevronRight className="w-5 h-5" />
@@ -93,9 +93,9 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
         >
           {activeClients.map((client) => {
             const Content = (
-              <div className="w-[200px] sm:w-[220px] md:w-[240px] h-40 p-4 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-neutral-800 rounded-2xl flex flex-col items-center justify-between text-center hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-md transition-all duration-300 group shrink-0 snap-start">
+              <div className="w-[200px] sm:w-[220px] md:w-[240px] h-40 p-4 bg-white border border-neutral-200 rounded-2xl flex flex-col items-center justify-between text-center hover:border-neutral-400 hover:shadow-md transition-all duration-300 group shrink-0 snap-start shadow-xs">
                 {/* Logo Box */}
-                <div className="w-full flex-1 flex items-center justify-center p-2">
+                <div className="w-full flex-1 flex items-center justify-center p-2 bg-white rounded-xl">
                   {client.logo ? (
                     <img
                       src={client.logo}
@@ -104,18 +104,18 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
                       loading="lazy"
                     />
                   ) : (
-                    <span className="text-sm font-black text-neutral-800 dark:text-neutral-200">
+                    <span className="text-sm font-black text-neutral-800">
                       {client.company || client.name}
                     </span>
                   )}
                 </div>
 
                 {/* Company Name & Industry */}
-                <div className="w-full pt-2 border-t border-neutral-100 dark:border-neutral-800/80">
-                  <h3 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 tracking-tight truncate">
+                <div className="w-full pt-2 border-t border-neutral-100">
+                  <h3 className="text-xs font-bold text-neutral-900 tracking-tight truncate">
                     {client.company || client.name}
                   </h3>
-                  <p className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider truncate mt-0.5">
+                  <p className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider truncate mt-0.5">
                     {client.industry}
                   </p>
                 </div>

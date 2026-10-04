@@ -2,9 +2,9 @@ import { Project, Client, Review, SiteSettings, MediaItem } from '@/types/portfo
 
 export const initialSiteSettings: SiteSettings = {
   name: 'Rupesh Yadav',
-  professional_title: 'Graphic Designer • Video Creator • Web Designer',
+  professional_title: 'Graphic Designer • Video Editor • Web Designer',
   bio: 'Creative designer and video editor specializing in graphic design, high-retention video editing & reels, and modern website design. Helping brands, local businesses, and creators stand out with clean, impactful visuals and fast turnaround.',
-  roles: ['Graphic Designer', 'Video Creator', 'Web Designer'],
+  roles: ['Graphic Designer', 'Video Editor', 'Web Designer'],
   phone: '8839775265',
   email: 'rupeshyadav2610@gmail.com',
   social_handle: '@rupeshyadavcom',
@@ -28,7 +28,7 @@ export const initialSiteSettings: SiteSettings = {
     { title: 'Website Development', short_description: 'Fast, SEO-first, mobile-responsive web development using Next.js, React, and modern CSS.', enabled: true },
   ],
   footer_text: 'Crafted with precision. Work first, credibility second, contact last.',
-  default_seo_title: 'Rupesh Yadav — Graphic Designer, Video Creator & Web Designer',
+  default_seo_title: 'Rupesh Yadav — Graphic Designer, Video Editor & Web Designer',
   default_seo_description: 'Official portfolio of Rupesh Yadav (@rupeshyadavcom). Explore graphic design, motion video, modern web experiences and creative case studies.',
   default_og_image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&h=630&q=80',
   google_analytics_id: '',

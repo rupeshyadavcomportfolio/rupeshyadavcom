@@ -17,7 +17,7 @@ export default async function AdminProjectsPage() {
         <span className="text-xs uppercase tracking-widest font-bold text-neutral-400">
           Content Repository
         </span>
-        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-1">
+        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-950 mt-1">
           PROJECTS MANAGER
         </h1>
         <p className="text-xs sm:text-sm text-neutral-500 mt-1">

@@ -13,7 +13,9 @@ export function VideoPinterestWall({
   ownerPhone?: string;
 }) {
   const videoProjects = useMemo(() => {
-    return projects.filter((p) => p.type === 'video' && p.status === 'published');
+    return projects
+      .filter((p) => p.type === 'video' && p.status === 'published')
+      .sort((a, b) => new Date(b.created_at || b.updated_at || 0).getTime() - new Date(a.created_at || a.updated_at || 0).getTime());
   }, [projects]);
 
   const [activeFilter, setActiveFilter] = useState<'all' | '9:16' | '16:9'>('all');
@@ -36,9 +38,6 @@ export function VideoPinterestWall({
             <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
               VIDEO & MOTION
             </h2>
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mt-1">
-              Short-form Reels (9:16) • Commercial Ads • 2D Motion Graphics
-            </p>
           </div>
 
           <Link

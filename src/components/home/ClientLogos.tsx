@@ -5,7 +5,13 @@ import { Client } from '@/types/portfolio';
 import { Award, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function ClientLogos({ clients }: { clients: Client[] }) {
-  const activeClients = clients.filter((c) => c.enabled);
+  const activeClients = [...clients]
+    .filter((c) => c.enabled)
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateB - dateA;
+    });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -50,9 +56,6 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
             <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-neutral-950">
               OUR CLIENTS
             </h2>
-            <p className="text-xs md:text-sm text-neutral-600 mt-1">
-              Brands, local businesses, and client projects I've worked with.
-            </p>
           </div>
 
           {/* Navigation Controls */}

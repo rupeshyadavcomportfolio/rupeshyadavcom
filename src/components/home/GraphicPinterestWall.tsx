@@ -13,7 +13,9 @@ export function GraphicPinterestWall({
   ownerPhone?: string;
 }) {
   const graphicProjects = useMemo(() => {
-    return projects.filter((p) => p.type === 'graphic' && p.status === 'published');
+    return projects
+      .filter((p) => p.type === 'graphic' && p.status === 'published')
+      .sort((a, b) => new Date(b.created_at || b.updated_at || 0).getTime() - new Date(a.created_at || a.updated_at || 0).getTime());
   }, [projects]);
 
   const [sizeFilter, setSizeFilter] = useState<string>('all');
@@ -45,9 +47,6 @@ export function GraphicPinterestWall({
             <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
               GRAPHIC DESIGN
             </h2>
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mt-1">
-              Social Media Ads • Posters • Branding • Print • Banners
-            </p>
           </div>
 
           <Link

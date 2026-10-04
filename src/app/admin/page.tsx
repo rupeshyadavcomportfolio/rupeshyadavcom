@@ -232,7 +232,11 @@ export default async function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200 text-neutral-800 font-medium">
-              {recentProjects.slice(0, 6).map((p) => (
+              {recentProjects
+                .slice()
+                .sort((a, b) => new Date(b.created_at || b.updated_at || 0).getTime() - new Date(a.created_at || a.updated_at || 0).getTime())
+                .slice(0, 6)
+                .map((p) => (
                 <tr key={p.id} className="hover:bg-neutral-50/80 transition-colors">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">

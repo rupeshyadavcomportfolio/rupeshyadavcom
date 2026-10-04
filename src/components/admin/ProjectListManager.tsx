@@ -25,7 +25,13 @@ function ProjectListContent({ initialProjects }: { initialProjects: Project[] })
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>(() =>
+    [...initialProjects].sort((a, b) => {
+      const timeA = new Date(a.created_at || a.updated_at || 0).getTime();
+      const timeB = new Date(b.created_at || b.updated_at || 0).getTime();
+      return timeB - timeA;
+    })
+  );
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -53,22 +59,29 @@ function ProjectListContent({ initialProjects }: { initialProjects: Project[] })
   }, [feedback]);
 
   const filtered = useMemo(() => {
-    return projects.filter((p) => {
-      if (typeFilter !== 'all' && p.type !== typeFilter) return false;
-      if (statusFilter !== 'all' && p.status !== statusFilter) return false;
-      if (featuredFilter === 'true' && !p.featured) return false;
-      if (featuredFilter === 'false' && p.featured) return false;
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        return (
-          p.title.toLowerCase().includes(q) ||
-          p.client?.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q) ||
-          p.slug?.toLowerCase().includes(q)
-        );
-      }
-      return true;
-    });
+    return projects
+      .slice()
+      .sort((a, b) => {
+        const timeA = new Date(a.created_at || a.updated_at || 0).getTime();
+        const timeB = new Date(b.created_at || b.updated_at || 0).getTime();
+        return timeB - timeA; // Latest upload first
+      })
+      .filter((p) => {
+        if (typeFilter !== 'all' && p.type !== typeFilter) return false;
+        if (statusFilter !== 'all' && p.status !== statusFilter) return false;
+        if (featuredFilter === 'true' && !p.featured) return false;
+        if (featuredFilter === 'false' && p.featured) return false;
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          return (
+            p.title.toLowerCase().includes(q) ||
+            p.client?.toLowerCase().includes(q) ||
+            p.category?.toLowerCase().includes(q) ||
+            p.slug?.toLowerCase().includes(q)
+          );
+        }
+        return true;
+      });
   }, [projects, search, typeFilter, statusFilter, featuredFilter]);
 
   const handleDuplicate = async (id: string, title: string) => {

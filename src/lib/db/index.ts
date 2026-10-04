@@ -98,7 +98,7 @@ export async function getProjects(filter?: {
         query = query.ilike('category', filter.category);
       }
 
-      query = query.order('order', { ascending: true });
+      query = query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
       if (!error && Array.isArray(data) && data.length > 0) {
@@ -113,7 +113,11 @@ export async function getProjects(filter?: {
               p.client?.toLowerCase().includes(q)
           );
         }
-        return list;
+        return list.sort((a, b) => {
+          const timeA = new Date(a.created_at || a.updated_at || 0).getTime();
+          const timeB = new Date(b.created_at || b.updated_at || 0).getTime();
+          return timeB - timeA;
+        });
       }
     } catch (e) {
       // Fall through to local fallback
@@ -149,7 +153,11 @@ export async function getProjects(filter?: {
     );
   }
 
-  return list.sort((a, b) => (a.order || 0) - (b.order || 0));
+  return list.sort((a, b) => {
+    const timeA = new Date(a.created_at || a.updated_at || 0).getTime();
+    const timeB = new Date(b.created_at || b.updated_at || 0).getTime();
+    return timeB - timeA;
+  });
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
@@ -203,7 +211,7 @@ export async function createProject(data: Partial<Project>): Promise<Project> {
     tags: data.tags || [],
     featured: Boolean(data.featured),
     status: data.status || 'draft',
-    order: db.projects.length + 1,
+    order: 0,
     featured_image: data.featured_image || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
     aspect_ratio: data.aspect_ratio || '16:9',
     format_name: data.format_name || '',
@@ -345,9 +353,9 @@ export async function deleteProjects(ids: string[]): Promise<number> {
 export async function getClients(): Promise<Client[]> {
   if (supabase) {
     try {
-      const { data, error } = await supabase.from('clients').select('*').order('order', { ascending: true });
+      const { data, error } = await supabase.from('clients').select('*').order('created_at', { ascending: false });
       if (!error && Array.isArray(data) && data.length > 0) {
-        return data as Client[];
+        return (data as Client[]).sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
       }
     } catch (e) {
       // Fallback
@@ -355,7 +363,7 @@ export async function getClients(): Promise<Client[]> {
   }
 
   const db = ensureDbFile();
-  return db.clients.sort((a, b) => a.order - b.order);
+  return db.clients.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
 }
 
 export async function saveClient(client: Partial<Client>): Promise<Client> {
@@ -428,9 +436,9 @@ export async function deleteClient(id: string): Promise<boolean> {
 export async function getReviews(): Promise<Review[]> {
   if (supabase) {
     try {
-      const { data, error } = await supabase.from('reviews').select('*').order('order', { ascending: true });
+      const { data, error } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
       if (!error && Array.isArray(data) && data.length > 0) {
-        return data as Review[];
+        return (data as Review[]).sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
       }
     } catch (e) {
       // Fallback
@@ -438,7 +446,7 @@ export async function getReviews(): Promise<Review[]> {
   }
 
   const db = ensureDbFile();
-  return db.reviews.sort((a, b) => a.order - b.order);
+  return db.reviews.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
 }
 
 export async function saveReview(review: Partial<Review>): Promise<Review> {
@@ -605,7 +613,7 @@ export async function getMediaList(): Promise<MediaItem[]> {
   }
 
   const db = ensureDbFile();
-  return db.media;
+  return db.media.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
 }
 
 export async function addMediaItem(item: Partial<MediaItem>): Promise<MediaItem> {

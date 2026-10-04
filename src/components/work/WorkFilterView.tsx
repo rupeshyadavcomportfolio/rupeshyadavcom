@@ -63,6 +63,10 @@ export function WorkFilterView({
       }
 
       return true;
+    }).sort((a, b) => {
+      const dateA = new Date(a.created_at || a.updated_at || 0).getTime();
+      const dateB = new Date(b.created_at || b.updated_at || 0).getTime();
+      return dateB - dateA;
     });
   }, [initialProjects, selectedType, selectedCategory, selectedYear, searchQuery]);
 

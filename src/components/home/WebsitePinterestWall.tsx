@@ -10,7 +10,13 @@ export function WebsitePinterestWall({
   projects: Project[];
   ownerPhone?: string;
 }) {
-  const webProjects = projects.filter((p) => p.type === 'website' && p.status === 'published');
+  const webProjects = [...projects]
+    .filter((p) => p.type === 'website' && p.status === 'published')
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at || a.updated_at || 0).getTime();
+      const dateB = new Date(b.created_at || b.updated_at || 0).getTime();
+      return dateB - dateA;
+    });
 
   return (
     <section id="website-section" className="w-full py-10 md:py-14 border-t border-neutral-200">
@@ -24,9 +30,6 @@ export function WebsitePinterestWall({
             <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
               WEBSITES & WEB APPS
             </h2>
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mt-1">
-              Next.js Applications • Editorial Portfolios • E-Commerce • UI/UX
-            </p>
           </div>
 
           <Link

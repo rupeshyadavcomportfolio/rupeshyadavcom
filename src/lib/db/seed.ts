@@ -6,7 +6,7 @@ export const initialSiteSettings: SiteSettings = {
   bio: 'Creative designer and video editor specializing in graphic design, high-retention video editing & reels, and modern website design. Helping brands, local businesses, and creators stand out with clean, impactful visuals and fast turnaround.',
   roles: ['Graphic Designer', 'Video Creator', 'Web Designer'],
   phone: '8839775265',
-  email: 'contact@rupeshyadav.com',
+  email: 'rupeshyadav2610@gmail.com',
   social_handle: '@rupeshyadavcom',
   social_links: [
     { platform: 'Facebook', url: 'https://www.facebook.com/rupeshyadavcom' },

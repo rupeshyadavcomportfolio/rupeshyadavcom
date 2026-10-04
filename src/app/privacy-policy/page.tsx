@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100 uppercase">Contact</h2>
           <p>
-            For any inquiries regarding this policy, reach out to contact@rupeshyadav.com or +91 8839775265.
+            For any inquiries regarding this policy, reach out to rupeshyadav2610@gmail.com or +91 8839775265.
           </p>
         </div>
       </div>

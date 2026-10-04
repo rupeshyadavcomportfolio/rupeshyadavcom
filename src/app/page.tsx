@@ -1,6 +1,8 @@
 import { getProjects, getClients, getSiteSettings } from '@/lib/db';
 import { Hero } from '@/components/home/Hero';
-import { PinterestFeed } from '@/components/home/PinterestFeed';
+import { GraphicPinterestWall } from '@/components/home/GraphicPinterestWall';
+import { VideoPinterestWall } from '@/components/home/VideoPinterestWall';
+import { WebsitePinterestWall } from '@/components/home/WebsitePinterestWall';
 import { ClientLogos } from '@/components/home/ClientLogos';
 import { ContactCta } from '@/components/home/ContactCta';
 
@@ -15,16 +17,22 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      {/* 1. Ultra-clean Minimal Header */}
+      {/* Top Minimal Hero with Quick Jump Anchors */}
       <Hero phone={settings.phone} />
 
-      {/* 2. Pure Visual Pinterest-Style Masonry Wall with Category & Aspect-Ratio Chips */}
-      <PinterestFeed projects={projects} ownerPhone={settings.phone} />
+      {/* CATEGORY 01: GRAPHIC DESIGN (Pinterest Masonry Wall with Front Size Filters) */}
+      <GraphicPinterestWall projects={projects} ownerPhone={settings.phone} />
 
-      {/* 3. Clients & Collaborations Ribbon */}
+      {/* CATEGORY 02: VIDEO & REELS (Pinterest Video Wall with Instant Playback) */}
+      <VideoPinterestWall projects={projects} ownerPhone={settings.phone} />
+
+      {/* CATEGORY 03: WEBSITES & WEB APPS (Clean Browser Visual Mockups & Live Links) */}
+      <WebsitePinterestWall projects={projects} ownerPhone={settings.phone} />
+
+      {/* Clients & Collaborations */}
       <ClientLogos clients={clients} />
 
-      {/* 4. Direct Quick Brief & Inquiry CTA */}
+      {/* Direct Contact & Brief Form */}
       <ContactCta />
     </div>
   );

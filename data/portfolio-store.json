@@ -481,11 +481,11 @@
       "featured": true,
       "status": "published",
       "order": 1,
-      "featured_image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
+      "featured_image": "https://www.nonisdigital.com",
       "desktop_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
       "tablet_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
       "mobile_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=80",
-      "website_url": "https://example.com/strata",
+      "website_url": "https://www.nonisdigital.com",
       "design_role": "Full UI/UX Concept & Design System",
       "development_role": "Next.js App Router & Tailwind CSS",
       "aspect_ratio": "16:9",
@@ -504,7 +504,7 @@
       },
       "published_at": "2026-03-10T14:00:00Z",
       "created_at": "2026-03-10T14:00:00Z",
-      "updated_at": "2026-03-10T14:00:00Z"
+      "updated_at": "2026-10-04T05:34:16.222Z"
     },
     {
       "id": "proj-w2",
@@ -789,7 +789,7 @@
         "url": "https://youtube.com/@rupeshyadavcom"
       }
     ],
-    "profile_photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "profile_photo": "/rupesh-yadav.png",
     "accent_color": "#111111",
     "services": [
       {

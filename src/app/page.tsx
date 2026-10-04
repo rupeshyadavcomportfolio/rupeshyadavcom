@@ -18,7 +18,7 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col w-full min-h-screen">
       {/* Top Minimal Hero with Quick Jump Anchors */}
-      <Hero phone={settings.phone} />
+      <Hero phone={settings.phone} photo={settings.profile_photo || '/rupesh-yadav.png'} />
 
       {/* CATEGORY 01: GRAPHIC DESIGN (Pinterest Masonry Wall with Front Size Filters) */}
       <GraphicPinterestWall projects={projects} ownerPhone={settings.phone} />

@@ -38,9 +38,9 @@ export default async function AboutPage() {
           <div className="lg:col-span-5">
             <div className="relative aspect-4/5 overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
               <img
-                src={settings.profile_photo}
+                src={settings.profile_photo || '/rupesh-yadav.png'}
                 alt="Rupesh Yadav"
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
               />
             </div>
 

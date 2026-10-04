@@ -15,7 +15,7 @@ export const initialSiteSettings: SiteSettings = {
     { platform: 'Dribbble', url: 'https://dribbble.com/rupeshyadavcom' },
     { platform: 'YouTube', url: 'https://youtube.com/@rupeshyadavcom' },
   ],
-  profile_photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+  profile_photo: '/rupesh-yadav.png',
   accent_color: '#111111',
   services: [
     { title: 'Graphic Design', short_description: 'Visual identity systems, social media assets, marketing collateral and digital visual branding.', enabled: true },

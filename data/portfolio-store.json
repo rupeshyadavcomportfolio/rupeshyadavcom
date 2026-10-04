@@ -1,51 +1,6 @@
 {
   "projects": [
     {
-      "id": "proj-1791089017567",
-      "title": "Automated Test Project 2026",
-      "slug": "automated-test-project-2026",
-      "type": "graphic",
-      "category": "Social Media Design",
-      "subcategory": "",
-      "client": "",
-      "year": "2026",
-      "short_description": "Validation project created by test suite.",
-      "description": "",
-      "tools": [],
-      "services": [],
-      "tags": [],
-      "featured": true,
-      "status": "published",
-      "order": 11,
-      "featured_image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
-      "aspect_ratio": "16:9",
-      "format_name": "",
-      "orientation": "landscape",
-      "alt_text": "Automated test project graphic",
-      "caption": "",
-      "video_url": "",
-      "video_type": "",
-      "duration": "",
-      "website_url": "",
-      "design_role": "",
-      "development_role": "",
-      "desktop_screenshot": "",
-      "tablet_screenshot": "",
-      "mobile_screenshot": "",
-      "gallery": [],
-      "case_study": {},
-      "seo": {
-        "seo_title": "Automated Test Project 2026 | Rupesh Yadav",
-        "seo_description": "Validation project created by test suite.",
-        "focus_keyword": "",
-        "canonical_url": "/work/graphic/automated-test-project-2026",
-        "no_index": false
-      },
-      "published_at": "2026-10-04T04:43:37.567Z",
-      "created_at": "2026-10-04T04:43:37.567Z",
-      "updated_at": "2026-10-04T04:43:37.567Z"
-    },
-    {
       "id": "proj-g1",
       "title": "Aura Sound — Audio Identity & Social Ad Campaign",
       "slug": "aura-sound-audio-identity-social-campaign",
@@ -239,6 +194,126 @@
       "published_at": "2025-11-18T10:00:00Z",
       "created_at": "2025-11-18T10:00:00Z",
       "updated_at": "2025-11-18T10:00:00Z"
+    },
+    {
+      "id": "proj-g5",
+      "title": "Kroma Autumn Fashion Lookbook & Editorial Deck",
+      "slug": "kroma-autumn-fashion-lookbook",
+      "type": "graphic",
+      "category": "Social Media Design",
+      "subcategory": "Lookbook",
+      "client": "Kroma Apparel",
+      "year": "2026",
+      "short_description": "Editorial Instagram 4:5 portrait deck showcasing seasonal outerwear and minimal typographic layouts.",
+      "description": "Designed a high-contrast editorial lookbook deck for Instagram carousel advertising and social launch.",
+      "tools": [
+        "Photoshop",
+        "InDesign"
+      ],
+      "services": [
+        "Social Media Design",
+        "Art Direction"
+      ],
+      "tags": [
+        "fashion",
+        "lookbook",
+        "editorial"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 5,
+      "featured_image": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85",
+      "aspect_ratio": "4:5",
+      "orientation": "portrait",
+      "format_name": "Portrait (4:5)",
+      "alt_text": "Kroma fashion lookbook design by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Kroma Fashion Editorial Deck | Rupesh Yadav",
+        "seo_description": "Fashion editorial social media campaign designed by Rupesh Yadav."
+      },
+      "published_at": "2026-03-22T10:00:00Z",
+      "created_at": "2026-03-22T10:00:00Z",
+      "updated_at": "2026-03-22T10:00:00Z"
+    },
+    {
+      "id": "proj-g6",
+      "title": "Solstice Sound & Light Festival — Swiss Typographic Poster",
+      "slug": "solstice-festival-typographic-poster",
+      "type": "graphic",
+      "category": "Poster",
+      "subcategory": "Print Design",
+      "client": "Solstice Live",
+      "year": "2026",
+      "short_description": "Experimental Swiss typography poster series featuring tactile gradients and rigid grid systems.",
+      "description": "Limited edition poster design combining kinetic letterforms with fluorescent pantone highlights.",
+      "tools": [
+        "Illustrator",
+        "Photoshop"
+      ],
+      "services": [
+        "Poster",
+        "Print Design"
+      ],
+      "tags": [
+        "poster",
+        "typography",
+        "swiss design"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 6,
+      "featured_image": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=85",
+      "aspect_ratio": "3:4",
+      "orientation": "portrait",
+      "format_name": "Poster (3:4)",
+      "alt_text": "Solstice typographic poster by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Solstice Typography Poster | Rupesh Yadav",
+        "seo_description": "Experimental Swiss typography poster design by Rupesh Yadav."
+      },
+      "published_at": "2026-02-28T10:00:00Z",
+      "created_at": "2026-02-28T10:00:00Z",
+      "updated_at": "2026-02-28T10:00:00Z"
+    },
+    {
+      "id": "proj-g7",
+      "title": "Origin Roasted Beans — Minimalist Craft Packaging",
+      "slug": "origin-roasted-beans-packaging",
+      "type": "graphic",
+      "category": "Branding",
+      "subcategory": "Packaging",
+      "client": "Origin Coffee Co",
+      "year": "2026",
+      "short_description": "Clean monochrome pouch packaging and sticker identity for single-origin specialty roast batches.",
+      "description": "Designed packaging labels and unboxing collateral emphasizing country of origin and harvest altitude.",
+      "tools": [
+        "Illustrator",
+        "Photoshop"
+      ],
+      "services": [
+        "Branding",
+        "Packaging"
+      ],
+      "tags": [
+        "branding",
+        "packaging",
+        "coffee"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 7,
+      "featured_image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=85",
+      "aspect_ratio": "1:1",
+      "orientation": "square",
+      "format_name": "Square (1:1)",
+      "alt_text": "Origin Coffee packaging design by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Origin Coffee Packaging Design | Rupesh Yadav",
+        "seo_description": "Artisanal coffee packaging design by Rupesh Yadav."
+      },
+      "published_at": "2026-03-05T10:00:00Z",
+      "created_at": "2026-03-05T10:00:00Z",
+      "updated_at": "2026-03-05T10:00:00Z"
     },
     {
       "id": "proj-v1",

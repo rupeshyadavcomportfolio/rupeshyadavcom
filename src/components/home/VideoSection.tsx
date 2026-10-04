@@ -8,7 +8,11 @@ import { Play, X, ArrowUpRight } from 'lucide-react';
 export function VideoSection({ projects, limit }: { projects: Project[]; limit?: number }) {
   const allVideoProjects = projects.filter((p) => p.type === 'video' && p.status === 'published');
   const videoProjects = limit ? allVideoProjects.slice(0, limit) : allVideoProjects;
-  const [activeModalVideo, setActiveModalVideo] = useState<{ url: string; title: string } | null>(null);
+  const [activeModalVideo, setActiveModalVideo] = useState<{
+    url: string;
+    title: string;
+    aspect_ratio?: string;
+  } | null>(null);
 
   return (
     <section id="video-work" className="w-full py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-neutral-200 dark:border-neutral-800">
@@ -32,7 +36,7 @@ export function VideoSection({ projects, limit }: { projects: Project[]; limit?:
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {videoProjects.map((project) => {
-          const isVertical = project.aspect_ratio === '9:16';
+          const isVertical = project.aspect_ratio === '9:16' || project.aspect_ratio === '4:5';
 
           return (
             <div
@@ -43,11 +47,19 @@ export function VideoSection({ projects, limit }: { projects: Project[]; limit?:
               <div
                 onClick={() => {
                   if (project.video_url) {
-                    setActiveModalVideo({ url: project.video_url, title: project.title });
+                    setActiveModalVideo({
+                      url: project.video_url,
+                      title: project.title,
+                      aspect_ratio: project.aspect_ratio,
+                    });
                   }
                 }}
                 className={`relative cursor-pointer overflow-hidden bg-neutral-900 ${
-                  isVertical ? 'aspect-9/16 sm:aspect-4/5 lg:aspect-9/16' : 'aspect-16/9'
+                  project.aspect_ratio === '1:1'
+                    ? 'aspect-square'
+                    : isVertical
+                    ? 'aspect-9/16 sm:aspect-4/5 lg:aspect-9/16'
+                    : 'aspect-16/9'
                 }`}
               >
                 <img
@@ -104,7 +116,15 @@ export function VideoSection({ projects, limit }: { projects: Project[]; limit?:
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800"
+            className={`relative w-full bg-neutral-950 rounded-2xl overflow-hidden border border-neutral-800 ${
+              activeModalVideo.aspect_ratio === '9:16'
+                ? 'max-w-sm'
+                : activeModalVideo.aspect_ratio === '4:5'
+                ? 'max-w-md'
+                : activeModalVideo.aspect_ratio === '1:1'
+                ? 'max-w-lg'
+                : 'max-w-4xl'
+            }`}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-800 text-white">
               <span className="text-xs font-bold uppercase tracking-wider truncate">
@@ -118,7 +138,17 @@ export function VideoSection({ projects, limit }: { projects: Project[]; limit?:
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="aspect-16/9 bg-black flex items-center justify-center">
+            <div
+              className={`bg-black flex items-center justify-center ${
+                activeModalVideo.aspect_ratio === '9:16'
+                  ? 'aspect-9/16'
+                  : activeModalVideo.aspect_ratio === '4:5'
+                  ? 'aspect-4/5'
+                  : activeModalVideo.aspect_ratio === '1:1'
+                  ? 'aspect-square'
+                  : 'aspect-16/9'
+              }`}
+            >
               <video
                 src={activeModalVideo.url}
                 controls

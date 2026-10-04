@@ -134,14 +134,28 @@ export default async function ProjectDetailPage({ params }: Props) {
         {/* Featured Media Container */}
         <div className="w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm">
           {project.type === 'video' && project.video_url ? (
-            <div className="aspect-16/9 w-full bg-black">
-              <video
-                src={project.video_url}
-                poster={project.featured_image}
-                controls
-                playsInline
-                className="w-full h-full object-contain"
-              />
+            <div className="w-full bg-black flex items-center justify-center p-2 sm:p-6">
+              <div
+                className={`w-full overflow-hidden rounded-md bg-black ${
+                  project.aspect_ratio === '9:16'
+                    ? 'aspect-9/16 max-w-sm'
+                    : project.aspect_ratio === '4:5'
+                    ? 'aspect-4/5 max-w-md'
+                    : project.aspect_ratio === '1:1'
+                    ? 'aspect-square max-w-lg'
+                    : project.aspect_ratio === '21:9'
+                    ? 'aspect-21/9 max-w-5xl'
+                    : 'aspect-16/9 max-w-5xl'
+                }`}
+              >
+                <video
+                  src={project.video_url}
+                  poster={project.featured_image}
+                  controls
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
           ) : (
             <img

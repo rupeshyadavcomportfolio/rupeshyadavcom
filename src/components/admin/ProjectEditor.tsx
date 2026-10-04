@@ -21,6 +21,12 @@ import {
   Film,
   Image as ImageIcon,
   X,
+  Camera,
+  Smartphone,
+  Monitor,
+  Square,
+  Check,
+  RefreshCw,
 } from 'lucide-react';
 
 interface Props {
@@ -36,9 +42,13 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
   const featuredFileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
   const galleryFileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [uploadingFile, setUploadingFile] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
+  const [capturingThumbnail, setCapturingThumbnail] = useState(false);
+  const [thumbnailMsg, setThumbnailMsg] = useState<string | null>(null);
+  const [videoMeta, setVideoMeta] = useState<{ width: number; height: number; duration: number } | null>(null);
 
   // Form State
   const [formData, setFormData] = useState<Partial<Project>>(() => {
@@ -274,6 +284,221 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
       orientation,
       aspect_ratio: `${w}:${h}`,
     }));
+  };
+
+  // Video format presets mapping with exact platform ratios & recommendations
+  const videoFormatPresets: Record<
+    string,
+    {
+      ratio: string;
+      orientation: 'portrait' | 'landscape' | 'square';
+      title: string;
+      platform: string;
+      dimensions: string;
+      aspectClass: string;
+      icon: string;
+      width: number;
+      height: number;
+    }
+  > = {
+    'Reels / Shorts (9:16)': {
+      ratio: '9:16',
+      orientation: 'portrait',
+      title: 'Reels / Shorts',
+      platform: 'Instagram Reels, YouTube Shorts, TikTok',
+      dimensions: '1080 × 1920 (Vertical 9:16)',
+      aspectClass: 'aspect-9/16 max-w-[210px]',
+      icon: '📱',
+      width: 1080,
+      height: 1920,
+    },
+    'YouTube Video (16:9)': {
+      ratio: '16:9',
+      orientation: 'landscape',
+      title: 'YouTube Standard',
+      platform: 'YouTube Landscape, Web & TV Video',
+      dimensions: '1920 × 1080 (Widescreen 16:9)',
+      aspectClass: 'aspect-16/9 max-w-md',
+      icon: '🖥️',
+      width: 1920,
+      height: 1080,
+    },
+    'Square Video (1:1)': {
+      ratio: '1:1',
+      orientation: 'square',
+      title: 'Square Feed',
+      platform: 'Instagram Feed, LinkedIn Post Video',
+      dimensions: '1080 × 1080 (Square 1:1)',
+      aspectClass: 'aspect-square max-w-[240px]',
+      icon: '⏹️',
+      width: 1080,
+      height: 1080,
+    },
+    'Instagram Portrait (4:5)': {
+      ratio: '4:5',
+      orientation: 'portrait',
+      title: 'Feed Portrait',
+      platform: 'Instagram In-Feed Vertical Video',
+      dimensions: '1080 × 1350 (Vertical 4:5)',
+      aspectClass: 'aspect-4/5 max-w-[220px]',
+      icon: '📱',
+      width: 1080,
+      height: 1350,
+    },
+    'Cinematic Ultrawide (21:9)': {
+      ratio: '21:9',
+      orientation: 'landscape',
+      title: 'Cinematic Ultrawide',
+      platform: 'Film Trailers, Cinematic Commercials',
+      dimensions: '2560 × 1080 (Ultrawide 21:9)',
+      aspectClass: 'aspect-21/9 max-w-lg',
+      icon: '🎬',
+      width: 2560,
+      height: 1080,
+    },
+    'Custom': {
+      ratio: 'Custom',
+      orientation: 'landscape',
+      title: 'Custom Resolution',
+      platform: 'Custom Dimensions (Width × Height)',
+      dimensions: 'Custom Pixel Size',
+      aspectClass: 'aspect-16/9 max-w-md',
+      icon: '⚙️',
+      width: 1920,
+      height: 1080,
+    },
+  };
+
+  const handleVideoFormatSelect = (fmtKey: string) => {
+    if (fmtKey === 'Custom') {
+      setFormData((prev) => ({
+        ...prev,
+        format_name: 'Custom',
+        aspect_ratio: 'Custom',
+      }));
+    } else {
+      const preset = videoFormatPresets[fmtKey];
+      if (preset) {
+        setFormData((prev) => ({
+          ...prev,
+          format_name: fmtKey,
+          aspect_ratio: preset.ratio,
+          orientation: preset.orientation,
+          custom_width: preset.width,
+          custom_height: preset.height,
+        }));
+      }
+    }
+  };
+
+  // Video metadata detection (resolution, duration, ratio)
+  const handleVideoLoadedMetadata = () => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    const width = vid.videoWidth || 0;
+    const height = vid.videoHeight || 0;
+    const durationSec = vid.duration || 0;
+
+    setVideoMeta({ width, height, duration: durationSec });
+
+    // Auto-fill duration if empty or default
+    if (durationSec && (!formData.duration || formData.duration === '0:30')) {
+      const mins = Math.floor(durationSec / 60);
+      const secs = Math.floor(durationSec % 60);
+      const formatted = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      setFormData((prev) => ({ ...prev, duration: formatted }));
+    }
+
+    // Auto-detect aspect ratio
+    if (width && height) {
+      const ratioVal = width / height;
+      let detectedRatio = '16:9';
+      let detectedFmt = 'YouTube Video (16:9)';
+      let detectedOrient: 'portrait' | 'landscape' | 'square' = 'landscape';
+
+      if (ratioVal <= 0.65) {
+        detectedRatio = '9:16';
+        detectedFmt = 'Reels / Shorts (9:16)';
+        detectedOrient = 'portrait';
+      } else if (ratioVal <= 0.85) {
+        detectedRatio = '4:5';
+        detectedFmt = 'Instagram Portrait (4:5)';
+        detectedOrient = 'portrait';
+      } else if (ratioVal >= 0.95 && ratioVal <= 1.05) {
+        detectedRatio = '1:1';
+        detectedFmt = 'Square Video (1:1)';
+        detectedOrient = 'square';
+      } else if (ratioVal >= 2.0) {
+        detectedRatio = '21:9';
+        detectedFmt = 'Cinematic Ultrawide (21:9)';
+        detectedOrient = 'landscape';
+      } else {
+        detectedRatio = '16:9';
+        detectedFmt = 'YouTube Video (16:9)';
+        detectedOrient = 'landscape';
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        custom_width: width,
+        custom_height: height,
+        aspect_ratio: prev.aspect_ratio || detectedRatio,
+        format_name: prev.format_name || detectedFmt,
+        orientation: prev.orientation || detectedOrient,
+      }));
+    }
+
+    // Auto-generate thumbnail frame if not yet present
+    if (!formData.featured_image) {
+      setTimeout(() => {
+        captureThumbnailFromVideo(false);
+      }, 600);
+    }
+  };
+
+  // Capture video frame as thumbnail (interactive or automatic)
+  const captureThumbnailFromVideo = (manual = true) => {
+    const vid = videoRef.current;
+    if (!vid) {
+      if (manual) setThumbnailMsg('Video player not ready yet. Please ensure video is loaded.');
+      return;
+    }
+
+    setCapturingThumbnail(true);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = vid.videoWidth || 1280;
+      canvas.height = vid.videoHeight || 720;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas 2d context');
+
+      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+      if (dataUrl && dataUrl.length > 200) {
+        setFormData((prev) => ({
+          ...prev,
+          featured_image: dataUrl,
+          desktop_screenshot: prev.type === 'website' ? dataUrl : prev.desktop_screenshot,
+          alt_text: prev.alt_text || `${prev.title || 'Video'} thumbnail preview by Rupesh Yadav`,
+        }));
+
+        const mins = Math.floor((vid.currentTime || 0) / 60);
+        const secs = Math.floor((vid.currentTime || 0) % 60);
+        const timestampStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+        setThumbnailMsg(`✓ Video frame at ${timestampStr} captured as Featured Thumbnail!`);
+        setTimeout(() => setThumbnailMsg(null), 4500);
+      }
+    } catch (err: any) {
+      console.warn('Canvas capture error:', err);
+      if (manual) {
+        setThumbnailMsg('Note: Browser security prevented direct canvas capture for this external video URL. Please upload a thumbnail file directly.');
+      }
+    } finally {
+      setCapturingThumbnail(false);
+    }
   };
 
   // Validation Checks
@@ -853,12 +1078,237 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 </div>
               </div>
 
-              {formData.video_url && (
-                <div className="pt-2">
-                  <div className="w-64 aspect-9/16 max-h-64 bg-black rounded-xl overflow-hidden shadow-xs">
-                    <video src={formData.video_url} controls className="w-full h-full object-cover" />
+              {/* VIDEO ASPECT RATIO & PLATFORM PRESET SELECTION */}
+              <div className="pt-3 border-t border-neutral-200/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-xs font-black uppercase tracking-wider text-neutral-900">
+                      Video Size & Aspect Ratio Preset <span className="text-red-500">*</span>
+                    </label>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Select video format (Reels 9:16, YouTube 16:9, Square 1:1) for proper portfolio layout.
+                    </p>
                   </div>
-                  <span className="text-[11px] text-neutral-500 mt-1 block">Video Player Preview</span>
+                  {videoMeta && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold bg-neutral-900 text-white rounded-lg">
+                      <Sparkles className="w-3 h-3 text-emerald-400" />
+                      <span>{videoMeta.width}×{videoMeta.height} px ({formData.aspect_ratio})</span>
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {Object.keys(videoFormatPresets).map((fmtKey) => {
+                    const preset = videoFormatPresets[fmtKey];
+                    const isSelected =
+                      formData.format_name === fmtKey ||
+                      (!formData.format_name && formData.aspect_ratio === preset.ratio);
+
+                    return (
+                      <button
+                        key={fmtKey}
+                        type="button"
+                        onClick={() => handleVideoFormatSelect(fmtKey)}
+                        className={`p-3 text-left rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-neutral-950 bg-neutral-950 text-white shadow-xs'
+                            : 'border-neutral-200 bg-white hover:border-neutral-400 text-neutral-800'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-base">{preset.icon}</span>
+                          <span
+                            className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
+                              isSelected
+                                ? 'bg-white/20 text-white'
+                                : 'bg-neutral-100 text-neutral-700'
+                            }`}
+                          >
+                            {preset.ratio}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="block font-bold text-xs leading-tight">
+                            {preset.title}
+                          </span>
+                          <span
+                            className={`text-[10px] block mt-0.5 ${
+                              isSelected ? 'text-neutral-300' : 'text-neutral-500'
+                            }`}
+                          >
+                            {preset.platform}
+                          </span>
+                          <span
+                            className={`text-[9px] block font-mono mt-1 ${
+                              isSelected ? 'text-neutral-400' : 'text-neutral-400'
+                            }`}
+                          >
+                            {preset.dimensions}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Custom dimension inputs if Custom is selected */}
+                {(formData.format_name === 'Custom' || formData.aspect_ratio === 'Custom') && (
+                  <div className="p-4 bg-white border border-neutral-200 rounded-xl space-y-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-600 block">
+                      Custom Video Resolution
+                    </span>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[11px] text-neutral-600 block mb-1">Width (px)</label>
+                        <input
+                          type="number"
+                          value={formData.custom_width || 1080}
+                          onChange={(e) => {
+                            const w = Number(e.target.value);
+                            calculateCustomRatio(w, formData.custom_height || 1080);
+                          }}
+                          className="w-full px-3 py-2 text-xs bg-neutral-50 border border-neutral-300 rounded-lg text-neutral-900 focus:outline-none focus:border-neutral-900"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-neutral-600 block mb-1">Height (px)</label>
+                        <input
+                          type="number"
+                          value={formData.custom_height || 1080}
+                          onChange={(e) => {
+                            const h = Number(e.target.value);
+                            calculateCustomRatio(formData.custom_width || 1080, h);
+                          }}
+                          className="w-full px-3 py-2 text-xs bg-neutral-50 border border-neutral-300 rounded-lg text-neutral-900 focus:outline-none focus:border-neutral-900"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* VIDEO PLAYER PREVIEW & THUMBNAIL CAPTURE WORKSTATION */}
+              {formData.video_url && (
+                <div className="pt-3 border-t border-neutral-200/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                        Interactive Video Player & Thumbnail Creator
+                      </h4>
+                      <p className="text-xs text-neutral-500 mt-0.5">
+                        Video play karein, manpasand frame par pause karein, aur button dabakar instant thumbnail banayein.
+                      </p>
+                    </div>
+                    {thumbnailMsg && (
+                      <span className="px-3 py-1 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold rounded-xl animate-in fade-in">
+                        {thumbnailMsg}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                    {/* Left: Video Player respecting selected aspect ratio */}
+                    <div className="bg-black/95 p-3 rounded-2xl border border-neutral-800 flex flex-col items-center justify-center">
+                      <div
+                        className={`relative w-full overflow-hidden rounded-xl bg-black ${
+                          formData.aspect_ratio === '9:16'
+                            ? 'aspect-9/16 max-w-[210px]'
+                            : formData.aspect_ratio === '4:5'
+                            ? 'aspect-4/5 max-w-[240px]'
+                            : formData.aspect_ratio === '1:1'
+                            ? 'aspect-square max-w-[260px]'
+                            : formData.aspect_ratio === '21:9'
+                            ? 'aspect-21/9 max-w-full'
+                            : 'aspect-16/9 max-w-full'
+                        }`}
+                      >
+                        <video
+                          ref={videoRef}
+                          src={formData.video_url}
+                          crossOrigin="anonymous"
+                          controls
+                          playsInline
+                          onLoadedMetadata={handleVideoLoadedMetadata}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <span className="text-[11px] text-neutral-400 mt-2 block font-medium">
+                        Preview Ratio: <strong className="text-white">{formData.aspect_ratio || '16:9'}</strong> ({formData.format_name || 'Standard'})
+                      </span>
+                    </div>
+
+                    {/* Right: Thumbnail Generator Controls & Current Thumbnail Preview */}
+                    <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-neutral-700 block mb-2">
+                          Video Thumbnail Controls
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={capturingThumbnail}
+                            onClick={() => captureThumbnailFromVideo(true)}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-neutral-950 hover:bg-neutral-800 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer"
+                          >
+                            {capturingThumbnail ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                            )}
+                            <span>Capture Current Frame as Thumbnail</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={capturingThumbnail}
+                            onClick={() => {
+                              const vid = videoRef.current;
+                              if (vid) {
+                                vid.currentTime = 1.0;
+                                vid.addEventListener('seeked', () => captureThumbnailFromVideo(true), { once: true });
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-50 text-neutral-800 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                            <span>Auto-Generate 1s Frame</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Featured Thumbnail Preview */}
+                      <div className="pt-2 border-t border-neutral-100">
+                        <span className="text-[11px] font-bold uppercase text-neutral-500 block mb-2">
+                          Active Video Featured Thumbnail
+                        </span>
+                        {formData.featured_image ? (
+                          <div className="flex items-center gap-3">
+                            <div className="w-28 aspect-16/9 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-200 shadow-xs shrink-0">
+                              <img
+                                src={formData.featured_image}
+                                alt="Active Thumbnail"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-md">
+                                <Check className="w-3 h-3" /> Ready & Linked
+                              </span>
+                              <p className="text-[11px] text-neutral-500 leading-tight">
+                                Yeh thumbnail homepage grid, video modal, aur project cards par dikhega.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-neutral-50 border border-dashed border-neutral-300 rounded-xl text-center">
+                            <p className="text-xs text-neutral-500">
+                              No thumbnail captured yet. Click &quot;Capture Current Frame&quot; above to set video thumbnail.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProjects, createProject } from '@/lib/db';
+import { getProjects, createProject, deleteProjects } from '@/lib/db';
 import { isAuthenticated } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
@@ -35,5 +35,32 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create project:', error);
     return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  const auth = await isAuthenticated();
+  if (!auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const data = await request.json();
+    const ids: string[] = data?.ids;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: 'Please provide an array of project IDs to delete' }, { status: 400 });
+    }
+
+    const count = await deleteProjects(ids);
+
+    revalidatePath('/');
+    revalidatePath('/work');
+    revalidatePath('/sitemap.xml');
+
+    return NextResponse.json({ success: true, count });
+  } catch (error) {
+    console.error('Failed to bulk delete projects:', error);
+    return NextResponse.json({ error: 'Failed to bulk delete projects' }, { status: 500 });
   }
 }

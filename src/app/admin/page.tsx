@@ -90,87 +90,119 @@ export default async function AdminDashboardPage() {
         })}
       </div>
 
-      {/* Statistics Grid */}
+      {/* Statistics Grid - Clickable shortcuts */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-neutral-900 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Total Projects</span>
-            <FolderKanban className="w-4 h-4 text-neutral-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-neutral-950">Total Projects</span>
+            <FolderKanban className="w-4 h-4 text-neutral-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-3xl font-black text-neutral-950">
             {stats.total}
           </span>
-        </div>
+          <span className="block text-[10px] text-neutral-400 mt-1 uppercase font-semibold">View all projects &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?status=published"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-emerald-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Published</span>
-            <CheckCircle className="w-4 h-4 text-emerald-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Published</span>
+            <CheckCircle className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-3xl font-black text-emerald-600">
             {stats.published}
           </span>
-        </div>
+          <span className="block text-[10px] text-emerald-600/80 mt-1 uppercase font-semibold">Live on website &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?status=draft"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-amber-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Drafts</span>
-            <FileEdit className="w-4 h-4 text-amber-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700">Drafts</span>
+            <FileEdit className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-3xl font-black text-amber-600">
             {stats.drafts}
           </span>
-        </div>
+          <span className="block text-[10px] text-amber-600/80 mt-1 uppercase font-semibold">In progress &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?featured=true"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-yellow-500 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Featured</span>
-            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-yellow-700">Featured</span>
+            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-3xl font-black text-neutral-950">
             {stats.featured}
           </span>
-        </div>
+          <span className="block text-[10px] text-yellow-600 mt-1 uppercase font-semibold">Homepage spotlight &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?type=graphic"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-blue-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Graphic</span>
-            <Image className="w-4 h-4 text-blue-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">Graphic</span>
+            <Image className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-2xl font-black text-neutral-950">
             {stats.graphic}
           </span>
-        </div>
+          <span className="block text-[10px] text-blue-600 mt-1 uppercase font-semibold">Manage graphics &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?type=video"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-rose-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Video</span>
-            <Video className="w-4 h-4 text-rose-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700">Video</span>
+            <Video className="w-4 h-4 text-rose-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-2xl font-black text-neutral-950">
             {stats.video}
           </span>
-        </div>
+          <span className="block text-[10px] text-rose-600 mt-1 uppercase font-semibold">Manage videos &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/projects?type=website"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-emerald-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Website</span>
-            <Globe className="w-4 h-4 text-emerald-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Website</span>
+            <Globe className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-2xl font-black text-neutral-950">
             {stats.website}
           </span>
-        </div>
+          <span className="block text-[10px] text-emerald-600 mt-1 uppercase font-semibold">Manage websites &rarr;</span>
+        </Link>
 
-        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs">
+        <Link
+          href="/admin/messages"
+          className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-xs hover:border-indigo-600 hover:shadow-sm transition-all group block"
+        >
           <div className="flex items-center justify-between text-neutral-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Inquiries</span>
-            <Mail className="w-4 h-4 text-indigo-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">Inquiries</span>
+            <Mail className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform" />
           </div>
           <span className="text-2xl font-black text-neutral-950">
             {stats.unreadMessages} Unread
           </span>
-        </div>
+          <span className="block text-[10px] text-indigo-600 mt-1 uppercase font-semibold">Open inbox &rarr;</span>
+        </Link>
       </div>
 
       {/* Recent Projects Table */}

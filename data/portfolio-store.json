@@ -2,29 +2,32 @@
   "projects": [
     {
       "id": "proj-1791103878021",
-      "title": "www.nonisdigital.com/",
-      "slug": "https://www.nonisdigital.com/",
+      "title": "Nonis Digital Agency",
+      "slug": "nonis-digital-agency",
       "type": "website",
       "category": "Website Design",
       "subcategory": "",
-      "client": "",
+      "client": "Nonis Digital",
       "year": "2026",
-      "short_description": "High-performance modern web application built for www.nonisdigital.com/.",
-      "description": "",
+      "short_description": "High-performance modern web application built for Nonis Digital Agency.",
+      "description": "Custom designed responsive agency portfolio and marketing platform.",
       "tools": [
         "Photoshop",
-        "Illustrator"
+        "Illustrator",
+        "Next.js"
       ],
       "services": [
-        "Graphic Design"
+        "Website Design",
+        "Full Stack Development"
       ],
       "tags": [
-        "design"
+        "website",
+        "digital agency"
       ],
       "featured": false,
-      "status": "draft",
+      "status": "published",
       "order": 14,
-      "featured_image": "https://image.thum.io/get/width/1200/crop/800/nohttps://www.nonisdigital.com/animate/www.nonisdigital.com/",
+      "featured_image": "https://image.thum.io/get/width/1200/crop/800/noanimate/https://www.nonisdigital.com/",
       "aspect_ratio": "16:9",
       "format_name": "",
       "orientation": "landscape",

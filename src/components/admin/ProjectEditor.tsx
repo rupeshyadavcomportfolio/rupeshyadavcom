@@ -19,6 +19,7 @@ import {
   Globe,
   Film,
   Image as ImageIcon,
+  X,
 } from 'lucide-react';
 
 interface Props {
@@ -102,6 +103,30 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [fetchingWebsite, setFetchingWebsite] = useState(false);
   const [websiteFetchMsg, setWebsiteFetchMsg] = useState<string | null>(null);
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deletingProject, setDeletingProject] = useState(false);
+
+  const handleDeleteProject = async () => {
+    if (!initialProject?.id) return;
+    setDeletingProject(true);
+    try {
+      const res = await fetch(`/api/projects/${initialProject.id}`, { method: 'DELETE' });
+      if (res.ok) {
+        router.push('/admin/projects');
+        router.refresh();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setErrorMsg(err.error || 'Failed to delete project');
+        setConfirmDelete(false);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Delete error');
+      setConfirmDelete(false);
+    } finally {
+      setDeletingProject(false);
+    }
+  };
 
   // File Upload Handler (Images & Videos from Device/Gallery)
   const handleFileUpload = async (file: File, target: 'featured' | 'video' | 'gallery') => {
@@ -280,14 +305,28 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
     setErrorMsg(null);
 
     try {
+      const targetTitle = (formData.title || '').trim();
+      let targetSlug = (formData.slug || '').trim();
+
+      if (!targetTitle) {
+        setActiveTab('basic');
+        throw new Error('Project Title is required. Please enter a title on the Basic Info tab.');
+      }
+
+      if (!targetSlug) {
+        targetSlug = targetTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        if (!targetSlug) targetSlug = `project-${Date.now()}`;
+      } else {
+        // Strip any protocol or domain slashes if user pasted a link
+        targetSlug = targetSlug.replace(/^https?:\/\//i, '').replace(/[^a-z0-9]+/gi, '-').toLowerCase().replace(/(^-|-$)/g, '');
+      }
+
       const payload: Partial<Project> = {
         ...formData,
+        title: targetTitle,
+        slug: targetSlug,
         status: statusOverride || formData.status || 'draft',
       };
-
-      if (!payload.title || !payload.slug) {
-        throw new Error('Title and Slug are mandatory.');
-      }
 
       const url = isEditing ? `/api/projects/${initialProject?.id}` : '/api/projects';
       const method = isEditing ? 'PUT' : 'POST';
@@ -304,14 +343,18 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
       }
 
       setSaveSuccess(true);
+      setFormData(data);
+
       if (!isEditing) {
-        router.push(`/admin/projects/${data.id}`);
+        setTimeout(() => {
+          router.push(`/admin/projects/${data.id}`);
+        }, 800);
       } else {
-        setFormData(data);
         router.refresh();
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'Error occurred while saving project');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSaving(false);
     }
@@ -363,7 +406,7 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
 
           <button
             type="button"
-            disabled={saving}
+            disabled={saving || deletingProject}
             onClick={() => handleSave('published')}
             className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-bold uppercase tracking-wider bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-xs cursor-pointer"
           >
@@ -374,6 +417,44 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             )}
             <span>Publish</span>
           </button>
+
+          {isEditing && (
+            confirmDelete ? (
+              <div className="inline-flex items-center gap-1 bg-red-50 border border-red-200 rounded-xl p-1 shadow-xs animate-in fade-in duration-100">
+                <button
+                  type="button"
+                  onClick={handleDeleteProject}
+                  disabled={deletingProject}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-xs cursor-pointer disabled:opacity-50 transition-colors"
+                >
+                  {deletingProject ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                  <span>Delete?</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(false)}
+                  className="p-1.5 text-neutral-500 hover:text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer"
+                  title="Cancel"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                disabled={saving || deletingProject}
+                className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-xl border border-red-200 cursor-pointer transition-colors"
+                title="Delete Project"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )
+          )}
         </div>
       </div>
 
@@ -588,6 +669,16 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
               className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 rounded-xl focus:outline-none focus:border-neutral-900"
             />
+          </div>
+
+          <div className="pt-4 border-t border-neutral-100 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setActiveTab('media')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+            >
+              <span>Next: Media Assets &rarr;</span>
+            </button>
           </div>
         </div>
       )}
@@ -958,6 +1049,23 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               )}
             </div>
           )}
+
+          <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setActiveTab('basic')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-xl transition-all cursor-pointer"
+            >
+              <span>&larr; Back to Basic</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('details')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+            >
+              <span>Next: Details & Tools &rarr;</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -1017,6 +1125,23 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 className="w-full px-3.5 py-2.5 text-sm bg-white border border-neutral-300 text-neutral-900 rounded-xl focus:outline-none focus:border-neutral-900"
               />
             </div>
+          </div>
+
+          <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setActiveTab('media')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-xl transition-all cursor-pointer"
+            >
+              <span>&larr; Back to Media</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab(formData.type === 'case_study' ? 'case_study' : 'seo')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+            >
+              <span>{formData.type === 'case_study' ? 'Next: Case Study Narrative &rarr;' : 'Next: SEO & Metadata &rarr;'}</span>
+            </button>
           </div>
         </div>
       )}
@@ -1116,6 +1241,23 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
               />
             </div>
           </div>
+
+          <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setActiveTab('details')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-xl transition-all cursor-pointer"
+            >
+              <span>&larr; Back to Narrative</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('seo')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+            >
+              <span>Next: SEO & Metadata &rarr;</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -1198,6 +1340,23 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
                 Exclude from search indexing (noindex)
               </label>
             </div>
+          </div>
+
+          <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setActiveTab(formData.type === 'case_study' ? 'case_study' : 'details')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-xl transition-all cursor-pointer"
+            >
+              <span>&larr; Back to Narrative</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('publishing')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-950 text-white rounded-xl hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+            >
+              <span>Go to Publishing Checklist &rarr;</span>
+            </button>
           </div>
         </div>
       )}

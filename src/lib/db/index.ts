@@ -233,6 +233,18 @@ export async function deleteProject(id: string): Promise<boolean> {
   return false;
 }
 
+export async function deleteProjects(ids: string[]): Promise<number> {
+  const db = ensureDbFile();
+  const idSet = new Set(ids);
+  const initialLength = db.projects.length;
+  db.projects = db.projects.filter((p) => !idSet.has(p.id));
+  const deletedCount = initialLength - db.projects.length;
+  if (deletedCount > 0) {
+    saveDb(db);
+  }
+  return deletedCount;
+}
+
 // ----------------- CLIENTS -----------------
 export async function getClients(): Promise<Client[]> {
   const db = ensureDbFile();

@@ -43,6 +43,7 @@ export function AdminNav() {
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin';
+    if (href === '/admin/projects') return pathname === '/admin/projects';
     return pathname.startsWith(href);
   };
 

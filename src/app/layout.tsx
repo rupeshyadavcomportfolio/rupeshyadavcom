@@ -35,6 +35,16 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: settings.name, url: 'https://rupeshyadav.com' }],
     creator: settings.name,
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rupeshyadav.com'),
+    icons: {
+      icon: [
+        { url: '/icon.png', sizes: '192x192', type: 'image/png' },
+        { url: '/favicon.ico', sizes: 'any' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+      shortcut: '/favicon.ico',
+    },
     openGraph: {
       title: settings.default_seo_title,
       description: settings.default_seo_description,

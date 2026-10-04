@@ -30,7 +30,7 @@ export const initialSiteSettings: SiteSettings = {
   footer_text: 'Crafted with precision. Work first, credibility second, contact last.',
   default_seo_title: 'Rupesh Yadav — Graphic Designer, Video Editor & Web Designer',
   default_seo_description: 'Official portfolio of Rupesh Yadav (@rupeshyadavcom). Explore graphic design, motion video, modern web experiences and creative case studies.',
-  default_og_image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&h=630&q=80',
+  default_og_image: '/rupesh-yadav.png',
   google_analytics_id: '',
   search_console_code: '',
   homepage_limits: {

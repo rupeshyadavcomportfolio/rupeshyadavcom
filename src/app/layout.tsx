@@ -76,9 +76,13 @@ export async function generateMetadata(): Promise<Metadata> {
         follow: true,
       },
     },
-    verification: {
-      google: (settings.search_console_code || 'YI-wkIFbGeN226m5rodFiqYjrVT5Xhc66TBmrylsiIw').replace(/^google-site-verification=/, ''),
-    },
+    ...(settings.search_console_code
+      ? {
+          verification: {
+            google: settings.search_console_code.replace(/^google-site-verification=/, ''),
+          },
+        }
+      : {}),
   };
 }
 
@@ -90,7 +94,6 @@ export default async function RootLayout({
   const settings = await getSiteSettings();
   const personSchema = generatePersonSchema(settings);
   const websiteSchema = generateWebSiteSchema(settings);
-  const googleToken = (settings.search_console_code || 'YI-wkIFbGeN226m5rodFiqYjrVT5Xhc66TBmrylsiIw').replace(/^google-site-verification=/, '');
 
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
@@ -103,7 +106,12 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        <meta name="google-site-verification" content={googleToken} />
+        {settings.search_console_code && (
+          <meta
+            name="google-site-verification"
+            content={settings.search_console_code.replace(/^google-site-verification=/, '')}
+          />
+        )}
       </head>
       <body className="min-h-screen flex flex-col font-sans bg-white text-neutral-900 antialiased">
         <ThemeProvider>

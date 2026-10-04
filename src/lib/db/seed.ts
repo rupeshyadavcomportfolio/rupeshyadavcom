@@ -32,7 +32,7 @@ export const initialSiteSettings: SiteSettings = {
   default_seo_description: 'Official portfolio of Rupesh Yadav (@rupeshyadavcom). Explore graphic design, motion video, modern web experiences and creative case studies.',
   default_og_image: '/rupesh-yadav.png',
   google_analytics_id: '',
-  search_console_code: 'YI-wkIFbGeN226m5rodFiqYjrVT5Xhc66TBmrylsiIw',
+  search_console_code: '',
   homepage_limits: {
     graphic: 6,
     video: 4,

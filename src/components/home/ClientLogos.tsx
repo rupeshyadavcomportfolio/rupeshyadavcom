@@ -1,36 +1,100 @@
-import React from 'react';
+'use client';
+
+import React, { useRef, useState, useEffect } from 'react';
 import { Client } from '@/types/portfolio';
-import { ExternalLink, Award } from 'lucide-react';
+import { Award, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function ClientLogos({ clients }: { clients: Client[] }) {
   const activeClients = clients.filter((c) => c.enabled);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [activeClients]);
+
+  const scroll = (direction: 'left' | 'right') => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const scrollAmount = 300;
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
 
   if (activeClients.length === 0) {
     return null;
   }
 
   return (
-    <section className="w-full py-16 md:py-24 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0c]/50">
+    <section className="w-full py-14 md:py-20 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-[#0c0c0c]/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-xs font-bold uppercase tracking-wider rounded-full mb-3">
-            <Award className="w-3.5 h-3.5 text-amber-500" />
-            Verified Client Partnerships
+        {/* Header with Title and Scroll Arrows */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-xs font-bold uppercase tracking-wider rounded-full mb-2.5">
+              <Award className="w-3.5 h-3.5 text-amber-500" />
+              Verified Client Brands
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-neutral-950 dark:text-white">
+              CLIENTS & COLLABORATIONS
+            </h2>
+            <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+              Scroll left & right to explore partner brands, local businesses, and client projects.
+            </p>
           </div>
-          <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-neutral-950 dark:text-white mt-1">
-            CLIENTS & COLLABORATIONS
-          </h2>
-          <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400 mt-2">
-            Brands, local businesses, and enterprises I've crafted designs, videos, and web solutions for.
-          </p>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => scroll('left')}
+              disabled={!canScrollLeft}
+              aria-label="Scroll left"
+              className={`p-2.5 rounded-full border transition-all ${
+                canScrollLeft
+                  ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black shadow-sm'
+                  : 'border-neutral-200 dark:border-neutral-800/60 bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              disabled={!canScrollRight}
+              aria-label="Scroll right"
+              className={`p-2.5 rounded-full border transition-all ${
+                canScrollRight
+                  ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-950 hover:text-white dark:hover:bg-white dark:hover:text-black shadow-sm'
+                  : 'border-neutral-200 dark:border-neutral-800/60 bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* 5-column responsive logo grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-5">
+        {/* Horizontal Scrollable Carousel Bar */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={checkScroll}
+          className="flex items-stretch gap-4 md:gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar scroll-smooth snap-x snap-mandatory cursor-grab active:cursor-grabbing"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {activeClients.map((client) => {
             const Content = (
-              <div className="h-40 p-4 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-neutral-800 rounded-2xl flex flex-col items-center justify-between text-center hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-md transition-all duration-300 group">
-                {/* Logo Image Box */}
+              <div className="w-[200px] sm:w-[220px] md:w-[240px] h-40 p-4 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-neutral-800 rounded-2xl flex flex-col items-center justify-between text-center hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-md transition-all duration-300 group shrink-0 snap-start">
+                {/* Logo Box */}
                 <div className="w-full flex-1 flex items-center justify-center p-2">
                   {client.logo ? (
                     <img
@@ -65,14 +129,18 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
                   href={client.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block group"
+                  className="block shrink-0 group snap-start"
                 >
                   {Content}
                 </a>
               );
             }
 
-            return <div key={client.id}>{Content}</div>;
+            return (
+              <div key={client.id} className="shrink-0 snap-start">
+                {Content}
+              </div>
+            );
           })}
         </div>
       </div>

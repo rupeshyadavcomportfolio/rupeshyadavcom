@@ -663,6 +663,28 @@
       "description": "Licensed termite inspection and exterminating management.",
       "order": 5,
       "enabled": true
+    },
+    {
+      "id": "client-gayakwad",
+      "name": "Gayakwad Job Consultancy",
+      "company": "Gayakwad Job Consultancy",
+      "industry": "Job Consultancy & Recruitment",
+      "logo": "/clients/gayakwad-consultancy.png",
+      "website_url": "",
+      "description": "Connecting talent, creating career opportunities and workforce solutions.",
+      "order": 6,
+      "enabled": true
+    },
+    {
+      "id": "client-golden-garland",
+      "name": "Golden Garland Abode",
+      "company": "Golden Garland Abode",
+      "industry": "Hospitality & Guest House",
+      "logo": "/clients/golden-garland.jpg",
+      "website_url": "",
+      "description": "Premium hospitality and guest house accommodations in Bhilai.",
+      "order": 7,
+      "enabled": true
     }
   ],
   "reviews": [

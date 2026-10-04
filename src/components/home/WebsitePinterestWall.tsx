@@ -70,7 +70,7 @@ export function WebsitePinterestWall({
                     project.desktop_screenshot ||
                     project.featured_image ||
                     (project.website_url
-                      ? `https://image.thum.io/get/width/1200/crop/800/noanimate/${project.website_url.replace(/^https?:\/\//, '')}`
+                      ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(project.website_url)}?w=1200&h=800`
                       : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80')
                   }
                   alt={project.title}

@@ -207,11 +207,12 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
       setFormData((prev) => {
         const cleanName = data.clean_url || 'Website Project';
         const newTitle = prev.title || data.title || cleanName;
+        const validScreenshot = data.screenshot_url || data.og_image || '';
         return {
           ...prev,
           website_url: data.url,
-          featured_image: data.screenshot_url,
-          desktop_screenshot: data.screenshot_url,
+          featured_image: validScreenshot,
+          desktop_screenshot: validScreenshot,
           title: newTitle,
           short_description: prev.short_description || data.description || `High-performance modern web application built for ${cleanName}.`,
           alt_text: prev.alt_text || `${newTitle} homepage preview screenshot by Rupesh Yadav`,
@@ -973,8 +974,23 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
             {/* Preview Box */}
             {formData.featured_image && (
               <div className="pt-2">
-                <div className="w-64 aspect-16/10 bg-white overflow-hidden border border-neutral-300 rounded-xl shadow-xs">
-                  <img src={formData.featured_image} alt="Preview" className="w-full h-full object-cover object-top" />
+                <div className="w-64 aspect-16/10 bg-neutral-100 overflow-hidden border border-neutral-300 rounded-xl shadow-xs relative">
+                  <img
+                    src={formData.featured_image}
+                    alt="Preview"
+                    className="w-full h-full object-cover object-top"
+                    onError={(e) => {
+                      if (formData.website_url && !formData.featured_image?.includes('wp.com/mshots')) {
+                        const fallbackUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(formData.website_url)}?w=1200&h=800`;
+                        (e.target as HTMLImageElement).src = fallbackUrl;
+                        setFormData((prev) => ({
+                          ...prev,
+                          featured_image: fallbackUrl,
+                          desktop_screenshot: fallbackUrl,
+                        }));
+                      }
+                    }}
+                  />
                 </div>
                 <span className="text-[11px] text-neutral-500 mt-1 block">Current Preview</span>
               </div>

@@ -1,0 +1,774 @@
+{
+  "projects": [
+    {
+      "id": "proj-1791089017567",
+      "title": "Automated Test Project 2026",
+      "slug": "automated-test-project-2026",
+      "type": "graphic",
+      "category": "Social Media Design",
+      "subcategory": "",
+      "client": "",
+      "year": "2026",
+      "short_description": "Validation project created by test suite.",
+      "description": "",
+      "tools": [],
+      "services": [],
+      "tags": [],
+      "featured": true,
+      "status": "published",
+      "order": 11,
+      "featured_image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+      "aspect_ratio": "16:9",
+      "format_name": "",
+      "orientation": "landscape",
+      "alt_text": "Automated test project graphic",
+      "caption": "",
+      "video_url": "",
+      "video_type": "",
+      "duration": "",
+      "website_url": "",
+      "design_role": "",
+      "development_role": "",
+      "desktop_screenshot": "",
+      "tablet_screenshot": "",
+      "mobile_screenshot": "",
+      "gallery": [],
+      "case_study": {},
+      "seo": {
+        "seo_title": "Automated Test Project 2026 | Rupesh Yadav",
+        "seo_description": "Validation project created by test suite.",
+        "focus_keyword": "",
+        "canonical_url": "/work/graphic/automated-test-project-2026",
+        "no_index": false
+      },
+      "published_at": "2026-10-04T04:43:37.567Z",
+      "created_at": "2026-10-04T04:43:37.567Z",
+      "updated_at": "2026-10-04T04:43:37.567Z"
+    },
+    {
+      "id": "proj-g1",
+      "title": "Aura Sound — Audio Identity & Social Ad Campaign",
+      "slug": "aura-sound-audio-identity-social-campaign",
+      "type": "graphic",
+      "category": "Social Media Design",
+      "subcategory": "Advertising Creative",
+      "client": "Aura Audio Lab",
+      "year": "2026",
+      "short_description": "High-contrast promotional visual system and carousel campaign designed for the launch of wireless noise-canceling headphones.",
+      "description": "A comprehensive visual campaign created for Aura Audio Lab. The goal was to establish a striking, editorial aesthetic that communicates acoustic precision. Produced multi-format social assets, Instagram carousel ads, and promotional banners with bold typography and tactile product photography.",
+      "tools": [
+        "Adobe Photoshop",
+        "Adobe Illustrator",
+        "Figma"
+      ],
+      "services": [
+        "Social Media Design",
+        "Advertising Creative",
+        "Art Direction"
+      ],
+      "tags": [
+        "social media",
+        "advertising",
+        "product design",
+        "campaign"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 1,
+      "featured_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85",
+      "aspect_ratio": "4:5",
+      "orientation": "portrait",
+      "format_name": "Instagram Portrait (4:5)",
+      "alt_text": "Aura Sound promotional audio campaign graphic designed by Rupesh Yadav",
+      "caption": "Hero campaign artwork for Aura wireless headphones launch.",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80",
+          "alt": "Aura Sound social asset 2",
+          "aspect_ratio": "1:1"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=1000&q=80",
+          "alt": "Aura Sound social asset 3",
+          "aspect_ratio": "4:5"
+        }
+      ],
+      "seo": {
+        "seo_title": "Aura Sound Audio Campaign Graphic Design | Rupesh Yadav",
+        "seo_description": "Editorial social media advertising campaign designed by Rupesh Yadav for Aura Audio Lab.",
+        "focus_keyword": "social media design",
+        "canonical_url": "/work/graphic/aura-sound-audio-identity-social-campaign",
+        "no_index": false
+      },
+      "published_at": "2026-03-15T10:00:00Z",
+      "created_at": "2026-03-15T10:00:00Z",
+      "updated_at": "2026-03-15T10:00:00Z"
+    },
+    {
+      "id": "proj-g2",
+      "title": "Monolith Architectural Exhibition — Poster Series",
+      "slug": "monolith-architectural-exhibition-posters",
+      "type": "graphic",
+      "category": "Poster",
+      "subcategory": "Print Design",
+      "client": "Urban Architecture Guild",
+      "year": "2025",
+      "short_description": "Minimalist brutalist print posters celebrating geometric forms and structural concrete aesthetics.",
+      "description": "Designed a trio of limited-run exhibition posters for the Monolith Architecture showcase. Exploring grid systems, disciplined negative space, and Swiss modernist typography to mirror architectural precision.",
+      "tools": [
+        "Adobe Illustrator",
+        "Adobe InDesign",
+        "Photoshop"
+      ],
+      "services": [
+        "Poster",
+        "Print Design",
+        "Typography"
+      ],
+      "tags": [
+        "poster",
+        "print",
+        "architecture",
+        "minimalism"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 2,
+      "featured_image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
+      "aspect_ratio": "3:4",
+      "orientation": "portrait",
+      "format_name": "Poster (3:4)",
+      "alt_text": "Monolith architectural exhibition poster series designed by Rupesh Yadav",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+          "alt": "Monolith Exhibition detail",
+          "aspect_ratio": "3:4"
+        }
+      ],
+      "seo": {
+        "seo_title": "Monolith Exhibition Poster Design | Rupesh Yadav",
+        "seo_description": "Brutalist print poster series designed by Rupesh Yadav for Monolith Architecture Exhibition.",
+        "focus_keyword": "poster design",
+        "canonical_url": "/work/graphic/monolith-architectural-exhibition-posters"
+      },
+      "published_at": "2026-02-10T12:00:00Z",
+      "created_at": "2026-02-10T12:00:00Z",
+      "updated_at": "2026-02-10T12:00:00Z"
+    },
+    {
+      "id": "proj-g3",
+      "title": "Verve Botanicals — Organic Skincare Brand Identity",
+      "slug": "verve-botanicals-skincare-branding",
+      "type": "graphic",
+      "category": "Branding",
+      "subcategory": "Social Media Design",
+      "client": "Verve Botanicals",
+      "year": "2026",
+      "short_description": "Holistic brand identity and packaging visual system for clean, sustainable skincare formulations.",
+      "description": "Developed an earth-toned visual identity encompassing logo design, packaging label systems, and a consistent Instagram social kit. The palette pairs warm terracotta with crisp botanical greens.",
+      "tools": [
+        "Figma",
+        "Adobe Illustrator",
+        "Photoshop"
+      ],
+      "services": [
+        "Branding",
+        "Social Media Design",
+        "Packaging"
+      ],
+      "tags": [
+        "branding",
+        "packaging",
+        "social media",
+        "skincare"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 3,
+      "featured_image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1200&q=85",
+      "aspect_ratio": "1:1",
+      "orientation": "square",
+      "format_name": "Square (1:1)",
+      "alt_text": "Verve Botanicals skincare packaging and branding identity by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Verve Botanicals Brand Identity Design | Rupesh Yadav",
+        "seo_description": "Clean skincare branding and social media collateral crafted by Rupesh Yadav.",
+        "focus_keyword": "branding identity"
+      },
+      "published_at": "2026-01-20T14:00:00Z",
+      "created_at": "2026-01-20T14:00:00Z",
+      "updated_at": "2026-01-20T14:00:00Z"
+    },
+    {
+      "id": "proj-g4",
+      "title": "FinEdge — FinTech Social Campaign & Data Visuals",
+      "slug": "finedge-fintech-social-campaign",
+      "type": "graphic",
+      "category": "Social Media Design",
+      "subcategory": "Advertising Creative",
+      "client": "FinEdge Wealth",
+      "year": "2025",
+      "short_description": "Complex financial data simplified into compelling, shareable LinkedIn and Instagram carousels.",
+      "description": "Transformed investment metrics and personal finance insights into clean, approachable infocards and high-performing social carousel decks.",
+      "tools": [
+        "Figma",
+        "Adobe Illustrator"
+      ],
+      "services": [
+        "Social Media Design",
+        "Data Visualization"
+      ],
+      "tags": [
+        "fintech",
+        "social media",
+        "infographics"
+      ],
+      "featured": false,
+      "status": "published",
+      "order": 4,
+      "featured_image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1000&q=85",
+      "aspect_ratio": "16:9",
+      "orientation": "landscape",
+      "format_name": "Banner (16:9)",
+      "alt_text": "FinEdge fintech social campaign graphics created by Rupesh Yadav",
+      "seo": {
+        "seo_title": "FinEdge Social Creative & Infographics | Rupesh Yadav",
+        "seo_description": "Fintech social campaign graphics designed by Rupesh Yadav."
+      },
+      "published_at": "2025-11-18T10:00:00Z",
+      "created_at": "2025-11-18T10:00:00Z",
+      "updated_at": "2025-11-18T10:00:00Z"
+    },
+    {
+      "id": "proj-v1",
+      "title": "Kroma Velocity — Urban Streetwear Brand Film",
+      "slug": "kroma-velocity-urban-streetwear-film",
+      "type": "video",
+      "category": "Advertisement",
+      "subcategory": "Short Video",
+      "client": "Kroma Urban Wear",
+      "year": "2026",
+      "short_description": "Fast-paced, rhythm-synced commercial short highlighting urban motion and waterproof textiles.",
+      "description": "Directed and edited a 45-second high-energy product film for the Kroma seasonal collection. Utilizing match cuts, speed ramping, subtle sound design, and custom typography overlays to capture streetwear culture.",
+      "tools": [
+        "Adobe Premiere Pro",
+        "After Effects",
+        "DaVinci Resolve"
+      ],
+      "services": [
+        "Video Editing",
+        "Motion Graphics",
+        "Sound Design"
+      ],
+      "tags": [
+        "video",
+        "commercial",
+        "fashion",
+        "streetwear",
+        "reels"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 1,
+      "featured_image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=85",
+      "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "video_type": "Advertisement",
+      "duration": "0:45",
+      "aspect_ratio": "9:16",
+      "orientation": "portrait",
+      "alt_text": "Kroma Velocity fashion film video thumbnail edited by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Kroma Velocity Fashion Commercial Video | Rupesh Yadav",
+        "seo_description": "High-impact commercial video edit and motion design by Rupesh Yadav for Kroma Urban Wear.",
+        "focus_keyword": "video editing"
+      },
+      "published_at": "2026-03-01T15:00:00Z",
+      "created_at": "2026-03-01T15:00:00Z",
+      "updated_at": "2026-03-01T15:00:00Z"
+    },
+    {
+      "id": "proj-v2",
+      "title": "Zenith Cloud — Product Motion Explainer",
+      "slug": "zenith-cloud-product-motion-explainer",
+      "type": "video",
+      "category": "Motion Graphics",
+      "subcategory": "Explainer",
+      "client": "Zenith Labs",
+      "year": "2026",
+      "short_description": "Sleek kinetic UI breakdown showing real-time collaborative workspace features in under 60 seconds.",
+      "description": "Created a fluid 2D motion graphics product demonstration highlighting the core workflows of Zenith Cloud. Custom vector icons, 3D layer perspective transforms, and smooth easing curves.",
+      "tools": [
+        "Adobe After Effects",
+        "Premiere Pro",
+        "Figma"
+      ],
+      "services": [
+        "Motion Graphics",
+        "Video Editing"
+      ],
+      "tags": [
+        "motion graphics",
+        "saas",
+        "explainer",
+        "ui motion"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 2,
+      "featured_image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=85",
+      "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+      "video_type": "Motion Graphics",
+      "duration": "1:12",
+      "aspect_ratio": "16:9",
+      "orientation": "landscape",
+      "alt_text": "Zenith Cloud product motion explainer animation by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Zenith Cloud Motion Graphics Explainer | Rupesh Yadav",
+        "seo_description": "SaaS product motion graphics and visual explanation created by Rupesh Yadav.",
+        "focus_keyword": "motion graphics"
+      },
+      "published_at": "2026-02-18T11:00:00Z",
+      "created_at": "2026-02-18T11:00:00Z",
+      "updated_at": "2026-02-18T11:00:00Z"
+    },
+    {
+      "id": "proj-v3",
+      "title": "Pulse Energy — Instagram Reel Series",
+      "slug": "pulse-energy-instagram-reel-series",
+      "type": "video",
+      "category": "Reels",
+      "subcategory": "Short Video",
+      "client": "Pulse Nutrition",
+      "year": "2025",
+      "short_description": "Series of 5 high-converting vertical video reels created for organic social growth and paid Meta ads.",
+      "description": "Engineered high-retention short videos with dynamic subtitles, punchy sound cues, and crisp B-roll grading.",
+      "tools": [
+        "Premiere Pro",
+        "CapCut Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Video Editing",
+        "Reels"
+      ],
+      "tags": [
+        "reels",
+        "short form",
+        "social video"
+      ],
+      "featured": false,
+      "status": "published",
+      "order": 3,
+      "featured_image": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=85",
+      "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      "video_type": "Reels",
+      "duration": "0:30",
+      "aspect_ratio": "9:16",
+      "orientation": "portrait",
+      "alt_text": "Pulse Energy Instagram Reel series by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Pulse Energy Short Form Reel Edits | Rupesh Yadav",
+        "seo_description": "High-retention vertical reels edited by Rupesh Yadav."
+      },
+      "published_at": "2025-12-05T09:00:00Z",
+      "created_at": "2025-12-05T09:00:00Z",
+      "updated_at": "2025-12-05T09:00:00Z"
+    },
+    {
+      "id": "proj-w1",
+      "title": "Strata Architectural Collective — Portfolio & Studio Site",
+      "slug": "strata-architectural-collective-website",
+      "type": "website",
+      "category": "Website Design",
+      "subcategory": "Development",
+      "client": "Strata Studio",
+      "year": "2026",
+      "short_description": "Editorial web presence with bespoke typography, horizontal architectural project view, and micro-interactions.",
+      "description": "Designed and engineered an immersive digital monograph for Strata Collective. Featuring smooth scroll physics, responsive multi-device galleries, and sub-second page loads optimized for high-resolution project photography.",
+      "tools": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Figma"
+      ],
+      "services": [
+        "Website Design",
+        "Website Development",
+        "UI/UX"
+      ],
+      "tags": [
+        "website",
+        "nextjs",
+        "architecture",
+        "editorial design"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 1,
+      "featured_image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
+      "desktop_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
+      "tablet_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+      "mobile_screenshot": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=80",
+      "website_url": "https://example.com/strata",
+      "design_role": "Full UI/UX Concept & Design System",
+      "development_role": "Next.js App Router & Tailwind CSS",
+      "aspect_ratio": "16:9",
+      "alt_text": "Strata Architectural studio website designed and developed by Rupesh Yadav",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80",
+          "alt": "Studio gallery view",
+          "aspect_ratio": "16:9"
+        }
+      ],
+      "seo": {
+        "seo_title": "Strata Studio Website Design & Development | Rupesh Yadav",
+        "seo_description": "Modern editorial portfolio website for Strata Architecture, created by Rupesh Yadav.",
+        "focus_keyword": "website design"
+      },
+      "published_at": "2026-03-10T14:00:00Z",
+      "created_at": "2026-03-10T14:00:00Z",
+      "updated_at": "2026-03-10T14:00:00Z"
+    },
+    {
+      "id": "proj-w2",
+      "title": "Lumina Coffee Roasters — E-Commerce Experience",
+      "slug": "lumina-coffee-roasters-ecommerce",
+      "type": "website",
+      "category": "E-commerce",
+      "subcategory": "Landing Page",
+      "client": "Lumina Roastery",
+      "year": "2026",
+      "short_description": "Direct-to-consumer artisanal coffee subscription store with intuitive roast selector and seamless checkout flow.",
+      "description": "Designed a warm, tactile digital storefront centered around origin storytelling and flavour profiles. Created responsive mockups and coded the front-end components.",
+      "tools": [
+        "Figma",
+        "Next.js",
+        "Tailwind CSS"
+      ],
+      "services": [
+        "Website Design",
+        "E-commerce",
+        "UI/UX"
+      ],
+      "tags": [
+        "ecommerce",
+        "branding",
+        "web design"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 2,
+      "featured_image": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=85",
+      "desktop_screenshot": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=85",
+      "website_url": "https://example.com/lumina",
+      "design_role": "Design + Development",
+      "development_role": "Full Stack Frontend",
+      "aspect_ratio": "16:9",
+      "alt_text": "Lumina Coffee Roasters e-commerce website designed by Rupesh Yadav",
+      "seo": {
+        "seo_title": "Lumina Coffee E-Commerce Web Design | Rupesh Yadav",
+        "seo_description": "Artisanal coffee e-commerce web platform created by Rupesh Yadav."
+      },
+      "published_at": "2026-02-01T10:00:00Z",
+      "created_at": "2026-02-01T10:00:00Z",
+      "updated_at": "2026-02-01T10:00:00Z"
+    },
+    {
+      "id": "proj-cs1",
+      "title": "Aura Sound: Complete Brand Launch & Digital Experience",
+      "slug": "aura-sound-brand-launch-case-study",
+      "type": "case_study",
+      "category": "Branding",
+      "subcategory": "Full Creative Direction",
+      "client": "Aura Audio Lab",
+      "year": "2026",
+      "short_description": "From identity design and social ad creative to motion reels and high-converting landing experience.",
+      "description": "Aura Sound required an integrated creative strategy to enter a competitive consumer audio market. Rupesh Yadav handled visual branding, campaign art direction, short video promo cuts, and the interactive web launch showcase.",
+      "tools": [
+        "Figma",
+        "Photoshop",
+        "Illustrator",
+        "Premiere Pro",
+        "After Effects",
+        "Next.js"
+      ],
+      "services": [
+        "Branding",
+        "Advertising Creative",
+        "Video Editing",
+        "Website Development"
+      ],
+      "tags": [
+        "case study",
+        "brand launch",
+        "full stack creative"
+      ],
+      "featured": true,
+      "status": "published",
+      "order": 1,
+      "featured_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85",
+      "aspect_ratio": "16:9",
+      "alt_text": "Aura Sound comprehensive creative case study by Rupesh Yadav",
+      "case_study": {
+        "overview": "Aura Sound approached me to develop their debut direct-to-consumer launch kit. The objective was to cut through noisy audiophile marketing with a clean, Scandinavian-influenced visual aesthetic that emphasizes acoustic silence and industrial design.",
+        "problem": "Existing audio marketing in this tier leaned heavily on chaotic neon gaming tropes or sterile corporate lifestyle shots. Aura needed a distinctive visual voice that conveyed premium craft without sounding artificial or exaggerated.",
+        "goal": "Establish an end-to-end identity system spanning brand guidelines, high-contrast social campaign assets, punchy motion video cuts, and a mobile-optimized launch page.",
+        "research": "Analyzed competitor campaigns and customer feedback. Discovered that 78% of modern buyers prioritize industrial design and acoustic clarity over technical decibel charts.",
+        "strategy": "Adopted an editorial layout structure with stark monochromes, warm ambient accents, macro product photography, and clean Swiss typography.",
+        "creative_direction": "Product-first imagery with zero visual fluff. Every graphic element exists to showcase the materials, earcups, and minimal silhouette of the device.",
+        "design_process": "Iterated through 4 distinct brand directions, settling on \"Acoustic Architecture\". Produced 24 social advertising variations across 1:1, 4:5, and 9:16 aspect ratios, accompanied by a 45-second launch teaser.",
+        "implementation": "Deployed automated Figma design tokens, rendered high-resolution product composites, animated keyframe typography in After Effects, and engineered the responsive Next.js launch page.",
+        "results": "Delivered an integrated brand kit ahead of schedule. The launch campaign generated over 45,000 video impressions and established Aura as a design-forward contender in consumer audio."
+      },
+      "seo": {
+        "seo_title": "Case Study: Aura Sound Creative Launch | Rupesh Yadav",
+        "seo_description": "Detailed case study on brand identity, video edits, and web launch created by Rupesh Yadav for Aura Sound.",
+        "focus_keyword": "creative case study",
+        "canonical_url": "/case-study/aura-sound-brand-launch-case-study"
+      },
+      "published_at": "2026-03-20T10:00:00Z",
+      "created_at": "2026-03-20T10:00:00Z",
+      "updated_at": "2026-03-20T10:00:00Z"
+    }
+  ],
+  "clients": [
+    {
+      "id": "client-1",
+      "name": "Apex Studio",
+      "company": "Apex Digital Studio",
+      "industry": "Creative Agency",
+      "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&h=80&q=80",
+      "website_url": "https://example.com",
+      "description": "Collaborated on brand campaign assets and product video motion.",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "client-2",
+      "name": "Nova Health",
+      "company": "Nova Wellness Tech",
+      "industry": "Health & Wellness",
+      "logo": "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&h=80&q=80",
+      "website_url": "https://example.com",
+      "description": "Designed social media campaign creative and mobile web experience.",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "client-3",
+      "name": "Kroma Apparel",
+      "company": "Kroma Urban Wear",
+      "industry": "Fashion & E-Commerce",
+      "logo": "https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=200&h=80&q=80",
+      "website_url": "https://example.com",
+      "description": "Complete brand packaging, e-commerce landing page, and lookbook edits.",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "client-4",
+      "name": "Zenith Labs",
+      "company": "Zenith SaaS",
+      "industry": "Technology",
+      "logo": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=200&h=80&q=80",
+      "website_url": "https://example.com",
+      "description": "Product walkthrough explainer video and UI design system.",
+      "order": 4,
+      "enabled": true
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "client_name": "Aman Sharma",
+      "company": "Apex Digital Studio",
+      "review": "Rupesh delivered exceptional graphic assets and motion design for our client launch. His attention to layout structure and typographic pacing elevated the entire campaign.",
+      "rating": 5,
+      "project_name": "Apex Brand Campaign",
+      "featured": true,
+      "published": true,
+      "order": 1
+    },
+    {
+      "id": "rev-2",
+      "client_name": "Priya Mehta",
+      "company": "Kroma Urban Wear",
+      "review": "Working with Rupesh on our seasonal launch video and landing page was seamless. The video hooks had tremendous retention, and the website performed fast on mobile.",
+      "rating": 5,
+      "project_name": "Kroma Spring Drop",
+      "featured": true,
+      "published": true,
+      "order": 2
+    },
+    {
+      "id": "rev-3",
+      "client_name": "Vikram Joshi",
+      "company": "Zenith SaaS",
+      "review": "Rupesh has a rare blend of strong visual design sensibility and technical web execution. He built our product launch site with clean aesthetics and zero clutter.",
+      "rating": 5,
+      "project_name": "Zenith Platform Redesign",
+      "featured": true,
+      "published": true,
+      "order": 3
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1791089017552",
+      "name": "Test Client",
+      "email": "client@example.com",
+      "phone": "9876543210",
+      "company": "Creative Studio X",
+      "service": "Graphic Design",
+      "message": "Hello Rupesh, this is a test inquiry message.",
+      "status": "unread",
+      "created_at": "2026-10-04T04:43:37.552Z"
+    },
+    {
+      "id": "msg-1",
+      "name": "Sarah Jenkins",
+      "email": "sarah@example.com",
+      "phone": "+1 555-0192",
+      "company": "Lumen Labs",
+      "service": "Graphic Design",
+      "message": "Hi Rupesh, love your visual identity work. We are launching an acoustic tech product next month and need social campaign decks and banners.",
+      "status": "read",
+      "created_at": "2026-10-02T04:30:17.230Z"
+    }
+  ],
+  "media": [
+    {
+      "id": "med-1",
+      "name": "aura-headphones-hero.jpg",
+      "url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85",
+      "type": "image",
+      "size": "420 KB",
+      "dimensions": "1200x800",
+      "aspect_ratio": "3:2",
+      "created_at": "2026-03-15T10:00:00Z"
+    },
+    {
+      "id": "med-2",
+      "name": "monolith-poster-mockup.jpg",
+      "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
+      "type": "image",
+      "size": "380 KB",
+      "dimensions": "1000x1333",
+      "aspect_ratio": "3:4",
+      "created_at": "2026-02-10T12:00:00Z"
+    },
+    {
+      "id": "med-3",
+      "name": "kroma-streetwear-video.mp4",
+      "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "type": "video",
+      "size": "8.4 MB",
+      "dimensions": "1080x1920",
+      "aspect_ratio": "9:16",
+      "created_at": "2026-03-01T15:00:00Z"
+    },
+    {
+      "id": "med-4",
+      "name": "strata-desktop-preview.jpg",
+      "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
+      "type": "image",
+      "size": "510 KB",
+      "dimensions": "1920x1080",
+      "aspect_ratio": "16:9",
+      "created_at": "2026-03-10T14:00:00Z"
+    }
+  ],
+  "settings": {
+    "name": "Rupesh Yadav",
+    "professional_title": "Graphic Designer • Video Creator • Web Designer",
+    "bio": "Multidisciplinary creative specializing in high-impact visual identities, motion & short-form video production, and high-performance digital web experiences. Focused on craft, clarity, and conversion.",
+    "roles": [
+      "Graphic Designer",
+      "Video Creator",
+      "Web Designer"
+    ],
+    "phone": "8839775265",
+    "email": "contact@rupeshyadav.com",
+    "social_handle": "@rupeshyadavcom",
+    "social_links": [
+      {
+        "platform": "Instagram",
+        "url": "https://instagram.com/rupeshyadavcom"
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://linkedin.com/in/rupeshyadavcom"
+      },
+      {
+        "platform": "Behance",
+        "url": "https://behance.net/rupeshyadavcom"
+      },
+      {
+        "platform": "Dribbble",
+        "url": "https://dribbble.com/rupeshyadavcom"
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://youtube.com/@rupeshyadavcom"
+      }
+    ],
+    "profile_photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "accent_color": "#111111",
+    "services": [
+      {
+        "title": "Graphic Design",
+        "short_description": "Visual identity systems, social media assets, marketing collateral and digital visual branding.",
+        "enabled": true
+      },
+      {
+        "title": "Social Media Design",
+        "short_description": "Engaging, platform-optimized carousel decks, campaign posts, and ad creatives designed for conversion.",
+        "enabled": true
+      },
+      {
+        "title": "Advertising Creative",
+        "short_description": "Performance-driven advertising creative for digital paid media campaigns across meta and search.",
+        "enabled": true
+      },
+      {
+        "title": "Branding & Identity",
+        "short_description": "Comprehensive brand style guides, logo marks, typography standards, and color architecture.",
+        "enabled": true
+      },
+      {
+        "title": "Video Editing & Reels",
+        "short_description": "Paced, modern short-form vertical edits (Reels/Shorts) engineered for high retention and engagement.",
+        "enabled": true
+      },
+      {
+        "title": "Motion Graphics",
+        "short_description": "Dynamic kinetic typography, 2D animations, logo reveals, and interactive product motion.",
+        "enabled": true
+      },
+      {
+        "title": "Website Design & UI/UX",
+        "short_description": "Clean, user-centric editorial interfaces, design systems, and responsive wireframes.",
+        "enabled": true
+      },
+      {
+        "title": "Website Development",
+        "short_description": "Fast, SEO-first, mobile-responsive web development using Next.js, React, and modern CSS.",
+        "enabled": true
+      }
+    ],
+    "footer_text": "Crafted with precision. Work first, credibility second, contact last.",
+    "default_seo_title": "Rupesh Yadav — Graphic Designer, Video Creator & Web Designer",
+    "default_seo_description": "Official portfolio of Rupesh Yadav (@rupeshyadavcom). Explore graphic design, motion video, modern web experiences and creative case studies.",
+    "default_og_image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&h=630&q=80",
+    "google_analytics_id": "",
+    "search_console_code": "",
+    "homepage_limits": {
+      "graphic": 6,
+      "video": 4,
+      "website": 4
+    }
+  },
+  "redirects": []
+}

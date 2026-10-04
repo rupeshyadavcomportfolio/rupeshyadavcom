@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Project, Client, Review, ContactMessage, SiteSettings, MediaItem, ProjectType } from '@/types/portfolio';
 import { initialProjects, initialClients, initialReviews, initialSiteSettings, initialMedia } from './seed';
+import { supabase } from '@/lib/supabase';
 
 interface DatabaseSchema {
   projects: Project[];
@@ -18,7 +19,11 @@ const DB_FILE = path.join(DATA_DIR, 'portfolio-store.json');
 
 function ensureDbFile(): DatabaseSchema {
   if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    } catch (e) {
+      // In read-only serverless environment
+    }
   }
 
   if (!fs.existsSync(DB_FILE)) {
@@ -26,24 +31,16 @@ function ensureDbFile(): DatabaseSchema {
       projects: initialProjects,
       clients: initialClients,
       reviews: initialReviews,
-      messages: [
-        {
-          id: 'msg-1',
-          name: 'Sarah Jenkins',
-          email: 'sarah@example.com',
-          phone: '+1 555-0192',
-          company: 'Lumen Labs',
-          service: 'Graphic Design',
-          message: 'Hi Rupesh, love your visual identity work. We are launching an acoustic tech product next month and need social campaign decks and banners.',
-          status: 'read',
-          created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-        }
-      ],
+      messages: [],
       media: initialMedia,
       settings: initialSiteSettings,
       redirects: [],
     };
-    fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf-8');
+    } catch (e) {
+      // In read-only serverless environment
+    }
     return defaultData;
   }
 
@@ -51,7 +48,6 @@ function ensureDbFile(): DatabaseSchema {
     const content = fs.readFileSync(DB_FILE, 'utf-8');
     return JSON.parse(content) as DatabaseSchema;
   } catch (err) {
-    console.error('Failed to read db file, returning fallback', err);
     return {
       projects: initialProjects,
       clients: initialClients,
@@ -65,20 +61,66 @@ function ensureDbFile(): DatabaseSchema {
 }
 
 function saveDb(data: DatabaseSchema) {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {
+    // Graceful catch for read-only serverless environment like Vercel
   }
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// ----------------- PROJECTS -----------------
+// ============================================================
+// 1. PROJECTS
+// ============================================================
 export async function getProjects(filter?: {
-  type?: ProjectType | string;
+  type?: string;
   status?: string;
-  featured?: boolean;
   category?: string;
+  featured?: boolean;
   search?: string;
 }): Promise<Project[]> {
+  if (supabase) {
+    try {
+      let query = supabase.from('projects').select('*');
+
+      if (filter?.status) {
+        query = query.eq('status', filter.status);
+      }
+      if (filter?.type && filter.type !== 'all') {
+        query = query.eq('type', filter.type);
+      }
+      if (filter?.featured !== undefined) {
+        query = query.eq('featured', filter.featured);
+      }
+      if (filter?.category && filter.category !== 'all') {
+        query = query.ilike('category', filter.category);
+      }
+
+      query = query.order('order', { ascending: true });
+
+      const { data, error } = await query;
+      if (!error && Array.isArray(data) && data.length > 0) {
+        let list = data as Project[];
+        if (filter?.search) {
+          const q = filter.search.toLowerCase();
+          list = list.filter(
+            (p) =>
+              p.title?.toLowerCase().includes(q) ||
+              p.short_description?.toLowerCase().includes(q) ||
+              p.description?.toLowerCase().includes(q) ||
+              p.client?.toLowerCase().includes(q)
+          );
+        }
+        return list;
+      }
+    } catch (e) {
+      // Fall through to local fallback
+    }
+  }
+
+  // Fallback to local DB
   const db = ensureDbFile();
   let list = db.projects;
 
@@ -111,12 +153,30 @@ export async function getProjects(filter?: {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('projects').select('*').eq('slug', slug).maybeSingle();
+      if (!error && data) return data as Project;
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   const project = db.projects.find((p) => p.slug === slug);
   return project || null;
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('projects').select('*').eq('id', id).maybeSingle();
+      if (!error && data) return data as Project;
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   const project = db.projects.find((p) => p.id === id);
   return project || null;
@@ -128,7 +188,7 @@ export async function createProject(data: Partial<Project>): Promise<Project> {
   const newSlug = data.slug || data.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `project-${Date.now()}`;
   
   const newProject: Project = {
-    id: `proj-${Date.now()}`,
+    id: data.id || `proj-${Date.now()}`,
     title: data.title || 'Untitled Project',
     slug: newSlug,
     type: data.type || 'graphic',
@@ -173,6 +233,14 @@ export async function createProject(data: Partial<Project>): Promise<Project> {
     updated_at: now,
   };
 
+  if (supabase) {
+    try {
+      await supabase.from('projects').insert(newProject);
+    } catch (e) {
+      console.error('Supabase project insert failed:', e);
+    }
+  }
+
   db.projects.unshift(newProject);
   saveDb(db);
   return newProject;
@@ -181,19 +249,22 @@ export async function createProject(data: Partial<Project>): Promise<Project> {
 export async function updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
   const db = ensureDbFile();
   const index = db.projects.findIndex((p) => p.id === id);
-  if (index === -1) return null;
-
-  const current = db.projects[index];
   const now = new Date().toISOString();
 
-  // Handle slug change redirect tracking
-  if (updates.slug && updates.slug !== current.slug) {
-    db.redirects.push({
-      old_url: `/work/${current.type}/${current.slug}`,
-      new_url: `/work/${updates.type || current.type}/${updates.slug}`,
-      created_at: now,
-    });
+  let current = index !== -1 ? db.projects[index] : null;
+
+  if (supabase) {
+    try {
+      const { data: supaProject } = await supabase.from('projects').select('*').eq('id', id).maybeSingle();
+      if (supaProject) current = supaProject as Project;
+
+      await supabase.from('projects').update({ ...updates, updated_at: now }).eq('id', id);
+    } catch (e) {
+      console.error('Supabase project update failed:', e);
+    }
   }
+
+  if (!current) return null;
 
   const updated: Project = {
     ...current,
@@ -202,8 +273,11 @@ export async function updateProject(id: string, updates: Partial<Project>): Prom
     published_at: updates.status === 'published' && !current.published_at ? now : current.published_at,
   };
 
-  db.projects[index] = updated;
-  saveDb(db);
+  if (index !== -1) {
+    db.projects[index] = updated;
+    saveDb(db);
+  }
+
   return updated;
 }
 
@@ -223,6 +297,17 @@ export async function duplicateProject(id: string): Promise<Project | null> {
 }
 
 export async function deleteProject(id: string): Promise<boolean> {
+  let deletedFromSupabase = false;
+
+  if (supabase) {
+    try {
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (!error) deletedFromSupabase = true;
+    } catch (e) {
+      console.error('Supabase project delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const initialLength = db.projects.length;
   db.projects = db.projects.filter((p) => p.id !== id);
@@ -230,10 +315,19 @@ export async function deleteProject(id: string): Promise<boolean> {
     saveDb(db);
     return true;
   }
-  return false;
+
+  return deletedFromSupabase;
 }
 
 export async function deleteProjects(ids: string[]): Promise<number> {
+  if (supabase) {
+    try {
+      await supabase.from('projects').delete().in('id', ids);
+    } catch (e) {
+      console.error('Supabase bulk projects delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const idSet = new Set(ids);
   const initialLength = db.projects.length;
@@ -242,18 +336,40 @@ export async function deleteProjects(ids: string[]): Promise<number> {
   if (deletedCount > 0) {
     saveDb(db);
   }
-  return deletedCount;
+  return ids.length;
 }
 
-// ----------------- CLIENTS -----------------
+// ============================================================
+// 2. CLIENTS
+// ============================================================
 export async function getClients(): Promise<Client[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('clients').select('*').order('order', { ascending: true });
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data as Client[];
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   return db.clients.sort((a, b) => a.order - b.order);
 }
 
 export async function saveClient(client: Partial<Client>): Promise<Client> {
   const db = ensureDbFile();
+
   if (client.id) {
+    if (supabase) {
+      try {
+        await supabase.from('clients').update(client).eq('id', client.id);
+      } catch (e) {
+        console.error('Supabase client update failed:', e);
+      }
+    }
+
     const idx = db.clients.findIndex((c) => c.id === client.id);
     if (idx !== -1) {
       db.clients[idx] = { ...db.clients[idx], ...client } as Client;
@@ -263,7 +379,7 @@ export async function saveClient(client: Partial<Client>): Promise<Client> {
   }
 
   const newClient: Client = {
-    id: `client-${Date.now()}`,
+    id: client.id || `client-${Date.now()}`,
     name: client.name || 'New Client',
     company: client.company || client.name || '',
     industry: client.industry || '',
@@ -274,12 +390,28 @@ export async function saveClient(client: Partial<Client>): Promise<Client> {
     enabled: client.enabled !== undefined ? client.enabled : true,
   };
 
+  if (supabase) {
+    try {
+      await supabase.from('clients').insert(newClient);
+    } catch (e) {
+      console.error('Supabase client insert failed:', e);
+    }
+  }
+
   db.clients.push(newClient);
   saveDb(db);
   return newClient;
 }
 
 export async function deleteClient(id: string): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from('clients').delete().eq('id', id);
+    } catch (e) {
+      console.error('Supabase client delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const len = db.clients.length;
   db.clients = db.clients.filter((c) => c.id !== id);
@@ -287,18 +419,40 @@ export async function deleteClient(id: string): Promise<boolean> {
     saveDb(db);
     return true;
   }
-  return false;
+  return true;
 }
 
-// ----------------- REVIEWS -----------------
+// ============================================================
+// 3. REVIEWS
+// ============================================================
 export async function getReviews(): Promise<Review[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('reviews').select('*').order('order', { ascending: true });
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data as Review[];
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   return db.reviews.sort((a, b) => a.order - b.order);
 }
 
 export async function saveReview(review: Partial<Review>): Promise<Review> {
   const db = ensureDbFile();
+
   if (review.id) {
+    if (supabase) {
+      try {
+        await supabase.from('reviews').update(review).eq('id', review.id);
+      } catch (e) {
+        console.error('Supabase review update failed:', e);
+      }
+    }
+
     const idx = db.reviews.findIndex((r) => r.id === review.id);
     if (idx !== -1) {
       db.reviews[idx] = { ...db.reviews[idx], ...review } as Review;
@@ -308,7 +462,7 @@ export async function saveReview(review: Partial<Review>): Promise<Review> {
   }
 
   const newReview: Review = {
-    id: `rev-${Date.now()}`,
+    id: review.id || `rev-${Date.now()}`,
     client_name: review.client_name || 'Client Name',
     company: review.company || '',
     review: review.review || '',
@@ -319,12 +473,28 @@ export async function saveReview(review: Partial<Review>): Promise<Review> {
     order: db.reviews.length + 1,
   };
 
+  if (supabase) {
+    try {
+      await supabase.from('reviews').insert(newReview);
+    } catch (e) {
+      console.error('Supabase review insert failed:', e);
+    }
+  }
+
   db.reviews.push(newReview);
   saveDb(db);
   return newReview;
 }
 
 export async function deleteReview(id: string): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from('reviews').delete().eq('id', id);
+    } catch (e) {
+      console.error('Supabase review delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const len = db.reviews.length;
   db.reviews = db.reviews.filter((r) => r.id !== id);
@@ -332,11 +502,24 @@ export async function deleteReview(id: string): Promise<boolean> {
     saveDb(db);
     return true;
   }
-  return false;
+  return true;
 }
 
-// ----------------- MESSAGES -----------------
+// ============================================================
+// 4. MESSAGES / INQUIRIES
+// ============================================================
 export async function getContactMessages(): Promise<ContactMessage[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data as ContactMessage[];
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   return db.messages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
@@ -349,19 +532,36 @@ export async function createContactMessage(msg: {
   service?: string;
   message: string;
 }): Promise<ContactMessage> {
-  const db = ensureDbFile();
   const newMsg: ContactMessage = {
     id: `msg-${Date.now()}`,
     ...msg,
     status: 'unread',
     created_at: new Date().toISOString(),
   };
+
+  if (supabase) {
+    try {
+      await supabase.from('messages').insert(newMsg);
+    } catch (e) {
+      console.error('Supabase message insert failed:', e);
+    }
+  }
+
+  const db = ensureDbFile();
   db.messages.unshift(newMsg);
   saveDb(db);
   return newMsg;
 }
 
 export async function updateMessageStatus(id: string, status: ContactMessage['status']): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from('messages').update({ status }).eq('id', id);
+    } catch (e) {
+      console.error('Supabase message status update failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const msg = db.messages.find((m) => m.id === id);
   if (!msg) return false;
@@ -371,6 +571,14 @@ export async function updateMessageStatus(id: string, status: ContactMessage['st
 }
 
 export async function deleteMessage(id: string): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from('messages').delete().eq('id', id);
+    } catch (e) {
+      console.error('Supabase message delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const len = db.messages.length;
   db.messages = db.messages.filter((m) => m.id !== id);
@@ -378,17 +586,29 @@ export async function deleteMessage(id: string): Promise<boolean> {
     saveDb(db);
     return true;
   }
-  return false;
+  return true;
 }
 
-// ----------------- MEDIA -----------------
+// ============================================================
+// 5. MEDIA LIBRARY
+// ============================================================
 export async function getMediaList(): Promise<MediaItem[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('media').select('*').order('created_at', { ascending: false });
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data as MediaItem[];
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   return db.media;
 }
 
 export async function addMediaItem(item: Partial<MediaItem>): Promise<MediaItem> {
-  const db = ensureDbFile();
   const newItem: MediaItem = {
     id: `med-${Date.now()}`,
     name: item.name || 'uploaded-file.jpg',
@@ -399,12 +619,30 @@ export async function addMediaItem(item: Partial<MediaItem>): Promise<MediaItem>
     aspect_ratio: item.aspect_ratio || '16:9',
     created_at: new Date().toISOString(),
   };
+
+  if (supabase) {
+    try {
+      await supabase.from('media').insert(newItem);
+    } catch (e) {
+      console.error('Supabase media insert failed:', e);
+    }
+  }
+
+  const db = ensureDbFile();
   db.media.unshift(newItem);
   saveDb(db);
   return newItem;
 }
 
 export async function deleteMediaItem(id: string): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from('media').delete().eq('id', id);
+    } catch (e) {
+      console.error('Supabase media delete failed:', e);
+    }
+  }
+
   const db = ensureDbFile();
   const len = db.media.length;
   db.media = db.media.filter((m) => m.id !== id);
@@ -412,34 +650,63 @@ export async function deleteMediaItem(id: string): Promise<boolean> {
     saveDb(db);
     return true;
   }
-  return false;
+  return true;
 }
 
-// ----------------- SITE SETTINGS -----------------
+// ============================================================
+// 6. SITE SETTINGS
+// ============================================================
 export async function getSiteSettings(): Promise<SiteSettings> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('settings').select('*').eq('id', 'default').maybeSingle();
+      if (!error && data?.data) {
+        return data.data as SiteSettings;
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
   const db = ensureDbFile();
   return db.settings;
 }
 
 export async function updateSiteSettings(settings: Partial<SiteSettings>): Promise<SiteSettings> {
   const db = ensureDbFile();
-  db.settings = { ...db.settings, ...settings };
+  const updated = { ...db.settings, ...settings };
+
+  if (supabase) {
+    try {
+      await supabase.from('settings').upsert({ id: 'default', data: updated });
+    } catch (e) {
+      console.error('Supabase settings upsert failed:', e);
+    }
+  }
+
+  db.settings = updated;
   saveDb(db);
   return db.settings;
 }
 
-// ----------------- DASHBOARD STATS -----------------
+// ============================================================
+// 7. DASHBOARD STATS
+// ============================================================
 export async function getDashboardStats() {
-  const db = ensureDbFile();
-  const total = db.projects.length;
-  const graphic = db.projects.filter((p) => p.type === 'graphic').length;
-  const video = db.projects.filter((p) => p.type === 'video').length;
-  const website = db.projects.filter((p) => p.type === 'website').length;
-  const caseStudies = db.projects.filter((p) => p.type === 'case_study').length;
-  const published = db.projects.filter((p) => p.status === 'published').length;
-  const drafts = db.projects.filter((p) => p.status === 'draft').length;
-  const featured = db.projects.filter((p) => p.featured).length;
-  const unreadMessages = db.messages.filter((m) => m.status === 'unread').length;
+  const [projectsList, messagesList] = await Promise.all([
+    getProjects(),
+    getContactMessages(),
+  ]);
+
+  const total = projectsList.length;
+  const graphic = projectsList.filter((p) => p.type === 'graphic').length;
+  const video = projectsList.filter((p) => p.type === 'video').length;
+  const website = projectsList.filter((p) => p.type === 'website').length;
+  const caseStudies = projectsList.filter((p) => p.type === 'case_study').length;
+  const published = projectsList.filter((p) => p.status === 'published').length;
+  const drafts = projectsList.filter((p) => p.status === 'draft').length;
+  const featured = projectsList.filter((p) => p.featured).length;
+  const unreadMessages = messagesList.filter((m) => m.status === 'unread').length;
 
   return {
     total,

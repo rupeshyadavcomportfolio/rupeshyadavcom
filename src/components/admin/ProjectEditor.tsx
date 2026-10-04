@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ProjectType, ProjectStatus } from '@/types/portfolio';
+import { uploadMediaFile } from '@/lib/upload-client';
 import {
   Save,
   CheckCircle,
@@ -135,20 +136,9 @@ export function ProjectEditor({ initialProject, initialType = 'graphic' }: Props
     setUploadMsg(`Uploading ${file.name}...`);
 
     try {
-      const data = new FormData();
-      data.append('file', file);
-
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        body: data,
+      const item = await uploadMediaFile(file, {
+        onProgress: (msg) => setUploadMsg(msg),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Upload failed');
-      }
-
-      const item = await res.json();
 
       if (target === 'featured') {
         setFormData((prev) => ({

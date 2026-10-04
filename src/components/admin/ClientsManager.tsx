@@ -3,6 +3,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Client } from '@/types/portfolio';
+import { uploadMediaFile } from '@/lib/upload-client';
 import {
   Plus,
   Trash2,
@@ -46,20 +47,10 @@ export function ClientsManager({ initialClients }: { initialClients: Client[] })
     setLogoMsg(`Uploading ${file.name}...`);
 
     try {
-      const data = new FormData();
-      data.append('file', file);
-
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        body: data,
+      const item = await uploadMediaFile(file, {
+        onProgress: (msg) => setLogoMsg(msg),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Upload failed');
-      }
-
-      const item = await res.json();
       setEditingClient((prev) => ({
         ...prev,
         logo: item.url,

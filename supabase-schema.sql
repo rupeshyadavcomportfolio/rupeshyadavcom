@@ -144,3 +144,32 @@ CREATE POLICY "Public Access Settings" ON public.settings FOR ALL TO anon, authe
 
 -- Enable Realtime (optional, for instant UI reflection)
 ALTER PUBLICATION supabase_realtime ADD TABLE public.projects, public.clients, public.reviews, public.messages, public.media, public.settings;
+
+-- ============================================================
+-- 7. SUPABASE STORAGE BUCKET (Media Assets: Images & Videos)
+-- ============================================================
+-- Automatically create the 'portfolio-media' storage bucket for persistent file uploads
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'portfolio-media',
+  'portfolio-media',
+  true,
+  52428800, -- 50MB file size limit for photos & high-res videos
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/ogg']
+)
+ON CONFLICT (id) DO UPDATE SET 
+  public = true, 
+  file_size_limit = 52428800;
+
+-- Storage Policies for 'portfolio-media'
+DROP POLICY IF EXISTS "Public Read Media" ON storage.objects;
+CREATE POLICY "Public Read Media" ON storage.objects FOR SELECT USING (bucket_id = 'portfolio-media');
+
+DROP POLICY IF EXISTS "Public Upload Media" ON storage.objects;
+CREATE POLICY "Public Upload Media" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'portfolio-media');
+
+DROP POLICY IF EXISTS "Public Update Media" ON storage.objects;
+CREATE POLICY "Public Update Media" ON storage.objects FOR UPDATE USING (bucket_id = 'portfolio-media');
+
+DROP POLICY IF EXISTS "Public Delete Media" ON storage.objects;
+CREATE POLICY "Public Delete Media" ON storage.objects FOR DELETE USING (bucket_id = 'portfolio-media');

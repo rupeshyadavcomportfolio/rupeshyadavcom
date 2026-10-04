@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { MediaItem } from '@/types/portfolio';
+import { uploadMediaFile } from '@/lib/upload-client';
 import {
   Upload,
   Copy,
@@ -44,21 +45,8 @@ export function MediaLibraryManager({ initialMedia }: { initialMedia: MediaItem[
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Upload failed');
-      }
-
-      const item = await res.json();
+      const item = await uploadMediaFile(file);
       setMediaList([item, ...mediaList]);
       showToast('success', `✓ Successfully uploaded ${file.name}!`);
       router.refresh();

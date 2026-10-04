@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SiteSettings } from '@/types/portfolio';
+import { uploadMediaFile } from '@/lib/upload-client';
 import {
   Save,
   CheckCircle2,
@@ -64,20 +65,7 @@ export function SiteSettingsManager({ initialSettings }: { initialSettings: Site
     setUploadingPhoto(true);
 
     try {
-      const data = new FormData();
-      data.append('file', file);
-
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        body: data,
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to upload photo');
-      }
-
-      const item = await res.json();
+      const item = await uploadMediaFile(file);
       setSettings((prev) => ({
         ...prev,
         profile_photo: item.url,

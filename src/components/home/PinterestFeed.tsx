@@ -220,38 +220,39 @@ export function PinterestFeed({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-2xl border border-neutral-200 flex flex-col md:flex-row my-auto"
+            className="relative w-full max-w-4xl max-h-[92vh] md:max-h-[90vh] bg-transparent md:bg-white rounded-3xl overflow-hidden shadow-2xl md:border md:border-neutral-200 flex flex-col md:flex-row my-auto items-center justify-center"
           >
             {/* Close Button */}
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/90 text-neutral-700 hover:bg-neutral-100 cursor-pointer shadow-md border border-neutral-200"
+              aria-label="Close modal"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 rounded-full bg-black/70 md:bg-white/90 text-white md:text-neutral-700 hover:bg-black/90 md:hover:bg-neutral-100 cursor-pointer shadow-xl border-0 md:border md:border-neutral-200 backdrop-blur-md transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Left Side: Large Visual Media */}
-            <div className="md:w-3/5 bg-neutral-950 flex items-center justify-center overflow-hidden min-h-[320px] max-h-[70vh] md:max-h-[85vh]">
+            <div className="w-full md:w-3/5 bg-transparent md:bg-neutral-950 flex items-center justify-center p-0 min-h-0 md:min-h-[320px] md:max-h-[85vh] shrink-0 md:overflow-hidden">
               {selectedPin.type === 'video' && selectedPin.video_url ? (
                 <video
                   src={selectedPin.video_url}
                   poster={selectedPin.featured_image}
                   controls
                   autoPlay
-                  className="w-full h-full object-contain max-h-[80vh]"
+                  className="w-auto h-auto max-w-full max-h-[85vh] md:max-h-[80vh] md:w-full md:h-full object-contain rounded-2xl md:rounded-none block mx-auto shadow-2xl md:shadow-none"
                 />
               ) : (
                 <img
                   src={selectedPin.featured_image}
                   alt={selectedPin.title}
-                  className="w-full h-full object-contain max-h-[80vh]"
+                  className="w-auto h-auto max-w-full max-h-[85vh] md:max-h-[80vh] md:w-full md:h-full object-contain rounded-2xl md:rounded-none block mx-auto shadow-2xl md:shadow-none"
                 />
               )}
             </div>
 
-            {/* Right Side: Minimal Specs & Actions */}
-            <div className="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto bg-white">
+            {/* Right Side: Minimal Specs & Actions - Hidden on mobile, shown on desktop */}
+            <div className="hidden md:flex md:w-2/5 p-6 sm:p-8 flex-col justify-between overflow-y-auto bg-white">
               <div className="space-y-4">
                 {/* Creator info */}
                 <div className="flex items-center gap-3 pb-3 border-b border-neutral-100">

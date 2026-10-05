@@ -36,22 +36,19 @@ export function GraphicPinterestWall({
   }, [graphicProjects, sizeFilter]);
 
   return (
-    <section id="graphic-section" className="w-full py-10 md:py-14 border-t border-neutral-200">
+    <section id="graphic-section" className="w-full py-10 md:py-14 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-emerald-50/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Category Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <span className="text-xs uppercase tracking-widest font-black text-rose-500">
-              CATEGORY 01
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between items-center md:items-end text-center md:text-left gap-4">
+          <div className="flex flex-col items-center md:items-start">
+            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950">
               GRAPHIC DESIGN
             </h2>
           </div>
 
           <Link
             href="/work/graphic"
-            className="text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-950 inline-flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-950 inline-flex items-center justify-center gap-1"
           >
             <span>View All Graphics</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -143,31 +140,32 @@ export function GraphicPinterestWall({
       {selectedPin && (
         <div
           onClick={() => setSelectedPin(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md p-4 sm:p-6 lg:p-10 flex items-center justify-center overflow-y-auto animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md p-3 sm:p-6 lg:p-10 flex items-center justify-center animate-in fade-in duration-200"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row my-auto"
+            className="relative w-full max-w-4xl max-h-[92vh] md:max-h-[90vh] bg-transparent md:bg-white md:dark:bg-[#121212] rounded-3xl overflow-hidden shadow-2xl md:border md:border-neutral-200 md:dark:border-neutral-800 flex flex-col md:flex-row my-auto items-center justify-center"
           >
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer shadow-md"
+              aria-label="Close modal"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 p-2.5 rounded-full bg-black/70 md:bg-white/90 md:dark:bg-neutral-800/90 text-white md:text-neutral-700 md:dark:text-neutral-300 hover:bg-black/90 md:hover:bg-white md:dark:hover:bg-neutral-700 cursor-pointer shadow-xl backdrop-blur-md transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Large Visual Image */}
-            <div className="md:w-3/5 bg-neutral-950 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[70vh] md:max-h-[85vh]">
+            <div className="w-full md:w-3/5 bg-transparent md:bg-neutral-950 flex items-center justify-center p-0 min-h-0 md:min-h-[300px] md:max-h-[85vh] shrink-0 md:overflow-hidden">
               <img
                 src={selectedPin.featured_image}
                 alt={selectedPin.title}
-                className="w-full h-full object-contain max-h-[80vh]"
+                className="w-auto h-auto max-w-full max-h-[85vh] md:max-h-[80vh] md:w-full md:h-full object-contain rounded-2xl md:rounded-none block mx-auto shadow-2xl md:shadow-none"
               />
             </div>
 
-            {/* Minimal Info & Quick Actions */}
-            <div className="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+            {/* Minimal Info & Quick Actions - Hidden on mobile, shown on desktop */}
+            <div className="hidden md:flex md:w-2/5 p-6 sm:p-8 flex-col justify-between overflow-y-auto">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
                   <div className="w-10 h-10 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-black flex items-center justify-center font-black text-xs">

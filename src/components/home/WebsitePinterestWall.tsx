@@ -19,22 +19,19 @@ export function WebsitePinterestWall({
     });
 
   return (
-    <section id="website-section" className="w-full py-10 md:py-14 border-t border-neutral-200">
+    <section id="website-section" className="w-full py-10 md:py-14 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-emerald-50/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Category Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <span className="text-xs uppercase tracking-widest font-black text-emerald-600">
-              CATEGORY 03
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between items-center md:items-end text-center md:text-left gap-4">
+          <div className="flex flex-col items-center md:items-start">
+            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-950">
               WEBSITES & WEB APPS
             </h2>
           </div>
 
           <Link
             href="/work/web"
-            className="text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-950 inline-flex items-center gap-1"
+            className="text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-neutral-950 inline-flex items-center justify-center gap-1"
           >
             <span>View All Websites</span>
             <ArrowUpRight className="w-3.5 h-3.5" />

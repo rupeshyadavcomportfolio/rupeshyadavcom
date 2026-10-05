@@ -44,11 +44,11 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
   }
 
   return (
-    <section className="w-full py-14 md:py-20 border-t border-neutral-200 bg-neutral-50/60">
+    <section className="w-full py-14 md:py-20 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-emerald-50/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Title and Scroll Arrows */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between items-center sm:items-end text-center sm:text-left gap-4 mb-8">
+          <div className="flex flex-col items-center sm:items-start">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wider rounded-full mb-2.5">
               <Award className="w-3.5 h-3.5 text-amber-600" />
               Verified Client Work
@@ -59,7 +59,7 @@ export function ClientLogos({ clients }: { clients: Client[] }) {
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-2 self-center sm:self-auto">
             <button
               onClick={() => scroll('left')}
               disabled={!canScrollLeft}

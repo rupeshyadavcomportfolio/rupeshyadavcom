@@ -5,7 +5,7 @@ import { ContactForm } from './ContactForm';
 
 export function ContactCta() {
   return (
-    <section id="contact" className="w-full py-16 md:py-24 border-t border-neutral-200 bg-neutral-50/40">
+    <section id="contact" className="w-full py-16 md:py-24 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-emerald-50/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: CTA Pitch */}

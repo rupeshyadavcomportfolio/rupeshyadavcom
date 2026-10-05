@@ -5,6 +5,7 @@ import { VideoPinterestWall } from '@/components/home/VideoPinterestWall';
 import { WebsitePinterestWall } from '@/components/home/WebsitePinterestWall';
 import { ClientLogos } from '@/components/home/ClientLogos';
 import { ContactCta } from '@/components/home/ContactCta';
+import { SectionDivider } from '@/components/ui/SectionDivider';
 
 export const revalidate = 60;
 
@@ -16,23 +17,28 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
+    <div className="flex flex-col w-full min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/40 to-emerald-50/40">
       {/* Top Minimal Hero with Quick Jump Anchors */}
       <Hero phone={settings.phone} photo={settings.profile_photo || '/rupesh-yadav.png'} />
 
-      {/* CATEGORY 01: GRAPHIC DESIGN (Pinterest Masonry Wall with Front Size Filters) */}
+      {/* CATEGORY 01: GRAPHIC DESIGN */}
+      <SectionDivider accent="rose" />
       <GraphicPinterestWall projects={projects} ownerPhone={settings.phone} />
 
-      {/* CATEGORY 02: VIDEO & REELS (Pinterest Video Wall with Instant Playback) */}
+      {/* CATEGORY 02: VIDEO & REELS */}
+      <SectionDivider accent="blue" />
       <VideoPinterestWall projects={projects} ownerPhone={settings.phone} />
 
-      {/* CATEGORY 03: WEBSITES & WEB APPS (Clean Browser Visual Mockups & Live Links) */}
+      {/* CATEGORY 03: WEBSITES & WEB APPS */}
+      <SectionDivider accent="emerald" />
       <WebsitePinterestWall projects={projects} ownerPhone={settings.phone} />
 
       {/* Clients & Collaborations */}
+      <SectionDivider accent="amber" />
       <ClientLogos clients={clients} />
 
       {/* Direct Contact & Brief Form */}
+      <SectionDivider accent="indigo" />
       <ContactCta />
     </div>
   );
